@@ -1,0 +1,15 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f5f7fb;
+  font-family: Inter, Arial, sans-serif;
+}
+
+:host {
+  display: block;
+  min-height: 100vh;
+  padding: 2rem;
+}

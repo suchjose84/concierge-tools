@@ -1,0 +1,23 @@
+@for (template of templates; track template.id) {
+  <div class="template-card">
+    <h3>{{ template.title }}</h3>
+
+    <div class="subject">
+      <strong>Subject:</strong> {{ template.subject }}
+    </div>
+
+    <pre>{{ template.body }}</pre>
+
+    <button type="button" (click)="copy(template.subject)">
+      Copy Subject
+    </button>
+
+    <button type="button" (click)="copy(template.body)">
+      Copy Body
+    </button>
+  </div>
+}
+
+@if (copied) {
+  <p class="success">{{ copied }}</p>
+}
