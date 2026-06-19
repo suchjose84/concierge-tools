@@ -1,9 +1,12 @@
 import { Component, signal } from '@angular/core';
-import { EmailTemplateComponent } from '../app/email-template/email-template';
+import { HeaderComponent } from './header/header';
+import { RouterOutlet } from '@angular/router';
+
+
 
 @Component({
   selector: 'app-root',
-  imports: [ EmailTemplateComponent],
+  imports: [ HeaderComponent, RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

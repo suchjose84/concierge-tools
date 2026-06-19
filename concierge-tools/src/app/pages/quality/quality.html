@@ -1,0 +1,56 @@
+<div class="quality-page">
+
+  <div class="toolbar">
+    <input placeholder="Case #" />
+
+    <input type="date" />
+
+    <button>Save QC</button>
+    <button>Export</button>
+  </div>
+
+  <div class="progress-bar">
+    <div class="progress-fill" [style.width.%]="progress()"></div>
+  </div>
+
+  @for(section of sections(); track section.title) {
+
+    <div class="section-card">
+
+      <div
+        class="section-header"
+        (click)="toggle(section)"
+      >
+        {{ section.title }}
+      </div>
+
+      @if(section.expanded) {
+
+        @for(item of section.items; track item.label) {
+
+          <div class="check-row">
+
+            <input
+              type="checkbox"
+              [(ngModel)]="item.checked"
+            />
+
+            <span>{{ item.label }}</span>
+
+            <input
+              class="note"
+              placeholder="Notes"
+              [(ngModel)]="item.note"
+            />
+
+          </div>
+
+        }
+
+      }
+
+    </div>
+
+  }
+
+</div>

@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
-import { EmailTemplate } from '../models/email-template.model';
-import { EmailTemplateService } from '../services/email-template';
+import { EmailTemplate } from '../../models/email-template.model';
+import { EmailTemplateService } from '../../services/email-template';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-email-template',
   standalone: true,
-  imports: [],
+  imports: [FormsModule],
   templateUrl: './email-template.html',
   styleUrl: './email-template.css',
 })

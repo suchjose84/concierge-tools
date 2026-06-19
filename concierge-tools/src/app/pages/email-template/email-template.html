@@ -1,0 +1,43 @@
+<div class="templates-grid">
+  @for (template of templates; track template.id) {
+    <div class="template-card">
+
+      <div class="card-actions">
+        <button
+          class="subject-btn"
+          type="button"
+          (click)="copy(template.subject)">
+          Subject
+        </button>
+
+        <button
+          class="body-btn"
+          type="button"
+          (click)="copy(template.body)">
+          Body
+        </button>
+      </div>
+
+      <span class="category">
+        {{ template.category }}
+      </span>
+
+      <h3>{{ template.title }}</h3>
+
+      <div class="subject-preview">
+        {{ template.subject }}
+      </div>
+
+      <div class="body-preview">
+        {{ template.body }}
+      </div>
+
+    </div>
+  }
+</div>
+
+@if (copied) {
+  <div class="success-toast">
+    {{ copied }}
+  </div>
+}

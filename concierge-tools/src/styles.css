@@ -1,1 +1,64 @@
-/* You can add global styles to this file, and also import other style files */
+/* Reset */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  background: var(--vp-bg);
+  color: var(--vp-text);
+  font-family: Inter, Arial, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  /* Primary */
+  --vp-blue: #0057b8;
+  --vp-blue-dark: #003f87;
+  --vp-blue-light: #eaf2ff;
+
+  /* Accent */
+  --vp-red: #e31c23;
+
+  /* Neutral */
+  --vp-bg: #f5f7fb;
+  --vp-surface: #ffffff;
+  --vp-border: #dce3ed;
+
+  /* Text */
+  --vp-text: #1f2937;
+  --vp-text-muted: #6b7280;
+
+  /* Status */
+  --vp-success: #16a34a;
+  --vp-warning: #f59e0b;
+  --vp-danger: #dc2626;
+
+  /* Shadows */
+  --vp-shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.06);
+  --vp-shadow-md: 0 6px 20px rgba(0, 0, 0, 0.08);
+
+  /* Radius */
+  --vp-radius: 12px;
+
+  /* Layout */
+  --vp-header-height: 64px;
+  --vp-content-padding: 1rem;
+}

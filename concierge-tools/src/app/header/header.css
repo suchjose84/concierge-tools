@@ -1,0 +1,40 @@
+.app-header {
+  background: #2563eb;
+  color: white;
+  padding: 0 2rem;
+}
+
+.header-content {
+  height: 64px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-content h1 {
+  margin: 0;
+  font-size: 1.75rem;
+}
+
+.nav-menu {
+  display: flex;
+  gap: 2rem;
+}
+
+.nav-menu a {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.5rem 0;
+  border-bottom: 3px solid transparent;
+  transition: 0.2s;
+}
+
+.nav-menu a:hover {
+  opacity: 0.9;
+}
+
+.nav-menu a.active {
+  border-bottom-color: white;
+}
