@@ -21,7 +21,7 @@ Just a couple of quick details to confirm:
 • Has the advertiser requested a Call Tracking number?
 • If this is a CCO ad, could you provide the Deal Title (for example, $15 for $30 worth of casual dining)?
 
-You can reply here or reach me at [phone number]. I’m here to make the process as smooth as possible for you and your client.
+You can reply here or reach me at 717-294-0273. I’m here to make the process as smooth as possible for you and your client.
 
 Thanks,`,
     },
