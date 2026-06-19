@@ -41,4 +41,6 @@ export class QualityComponent {
       ? Math.round((checked / items.length) * 100)
       : 0;
   });
+
+  // yoyoyo
 }
