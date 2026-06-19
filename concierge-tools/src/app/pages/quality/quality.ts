@@ -42,5 +42,5 @@ export class QualityComponent {
       : 0;
   });
 
-  // yesese
+  // yos!
 }
