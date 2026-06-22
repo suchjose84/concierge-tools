@@ -13,7 +13,7 @@ export class QualityService {
         { label: 'Website / QR', checked: false, note: '' },
         { label: 'Phone number', checked: false, note: '' },
         { label: 'Address', checked: false, note: '' },
-        { label: 'Hours', checked: false, note: '' },
+        { label: 'Business Hours', checked: false, note: '' },
       ],
     },
     {
@@ -26,6 +26,18 @@ export class QualityService {
         { label: 'Minimum purchase', checked: false, note: '' },
       ],
     },
+    {
+      title: 'Design Review',
+      expanded: true,
+      items: [
+        { label: 'Correct images', checked: false, note: '' },
+        { label: 'Image quality', checked: false, note: '' },
+        { label: 'Text readability', checked: false, note: '' },
+        { label: 'No typos', checked: false, note: '' },
+      ]
+    }
+
+
   ];
 
   getSections() {

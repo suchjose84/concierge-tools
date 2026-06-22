@@ -1,56 +1,164 @@
 <div class="quality-page">
 
+  <!-- ACTIONS -->
+
   <div class="toolbar">
-    <input placeholder="Case #" />
 
-    <input type="date" />
+    <button tabindex="-1">
+      Save QC
+    </button>
 
-    <button>Save QC</button>
-    <button>Export</button>
+    <button tabindex="-1">
+      Export
+    </button>
+
   </div>
+
+  <!-- AUDIT INFO -->
+
+  <div class="audit-info">
+
+    <input
+      placeholder="Auditor Name"
+      [ngModel]="auditor()"
+      (ngModelChange)="auditor.set($event)"
+    />
+
+    <input
+      placeholder="Case Owner"
+      [ngModel]="caseOwner()"
+      (ngModelChange)="caseOwner.set($event)"
+    />
+
+    <input
+      placeholder="Case Number"
+      [ngModel]="caseNumber()"
+      (ngModelChange)="caseNumber.set($event)"
+    />
+
+    <input
+      placeholder="Account Name"
+      [ngModel]="accountName()"
+      (ngModelChange)="accountName.set($event)"
+    />
+
+    <input
+      type="date"
+      [ngModel]="auditDate()"
+      (ngModelChange)="auditDate.set($event)"
+      tabindex="-1"
+    />
+
+  </div>
+
+  <!-- PROGRESS -->
 
   <div class="progress-bar">
-    <div class="progress-fill" [style.width.%]="progress()"></div>
+
+    <div
+      class="progress-fill"
+      [style.width.%]="progress()"
+    ></div>
+
   </div>
 
-  @for(section of sections(); track section.title) {
+  <!-- MAIN CONTENT -->
 
-    <div class="section-card">
+  <div class="quality-layout">
 
-      <div
-        class="section-header"
-        (click)="toggle(section)"
-      >
-        {{ section.title }}
-      </div>
+    <!-- LEFT SIDE -->
 
-      @if(section.expanded) {
+    <div class="checklist-column">
 
-        @for(item of section.items; track item.label) {
+      @for(section of sections(); track section.title) {
 
-          <div class="check-row">
+        <div class="section-card">
 
-            <input
-              type="checkbox"
-              [(ngModel)]="item.checked"
-            />
-
-            <span>{{ item.label }}</span>
-
-            <input
-              class="note"
-              placeholder="Notes"
-              [(ngModel)]="item.note"
-            />
-
+          <div
+            class="section-header"
+            (click)="toggle(section)"
+          >
+            {{ section.title }}
           </div>
 
-        }
+          @if(section.expanded) {
+
+            @for(item of section.items; track item.label) {
+
+              <div class="check-row">
+
+                <input
+                  type="checkbox"
+                  [(ngModel)]="item.checked"
+                />
+
+                <span class="label">
+                  {{ item.label }}
+                </span>
+
+                <input
+                  class="note"
+                  placeholder="Notes"
+                  [(ngModel)]="item.note"
+                  tabindex="-1"
+                />
+
+              </div>
+
+            }
+
+          }
+
+        </div>
 
       }
 
     </div>
 
-  }
+    <!-- RIGHT SIDE -->
+
+    <div class="notes-panel">
+
+      <h2>
+        QC Notes
+      </h2>
+
+      <textarea
+        readonly
+        [value]="qcNotes()"
+        tabindex="-1"
+      ></textarea>
+
+      <button
+        class="copy-btn"
+        tabindex="-1"
+        (click)="copyNotes()"
+      >
+        Copy Notes
+      </button>
+
+      <hr>
+
+      <h2>
+        Excel Output
+      </h2>
+
+      <textarea
+        readonly
+        [value]="excelOutput()"
+        tabindex="-1"
+      ></textarea>
+
+      <button
+        class="copy-btn"
+        tabindex="-1"
+        (click)="copyExcelOutput()"
+      >
+        Copy Excel Row
+      </button>
+
+    </div>
+
+  </div>
 
 </div>
