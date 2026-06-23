@@ -1,0 +1,127 @@
+<div class="history-page">
+
+  <h1>
+    QC History
+  </h1>
+
+  @if(records().length === 0) {
+
+    <div class="empty-state">
+
+      No saved QC records.
+
+    </div>
+
+  }
+
+  @if(records().length > 0) {
+
+    <input
+        class="search-input"
+        placeholder="Search case # or account..."
+    />
+
+    <table>
+
+      <thead>
+
+        <tr>
+
+          <th>Date</th>
+
+          <th>Case #</th>
+
+          <th>Account</th>
+
+          <th>Auditor</th>
+
+          <th>Owner</th>
+
+          <th>Actions</th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        @for(
+          record of records();
+          track record.id
+        ) {
+
+          <tr>
+
+            <td>
+
+              {{
+                record.auditDate
+              }}
+
+            </td>
+
+            <td>
+
+              {{
+                record.caseNumber
+              }}
+
+            </td>
+
+            <td>
+
+              {{
+                record.accountName
+              }}
+
+            </td>
+
+            <td>
+
+              {{
+                record.auditor
+              }}
+
+            </td>
+
+            <td>
+
+              {{
+                record.caseOwner
+              }}
+
+            </td>
+
+            <td>
+
+                <button
+                [routerLink]="[
+                    '/quality'
+                ]"
+                [queryParams]="{
+                    id: record.id
+                }"
+                >
+                View
+                </button>
+
+              <button
+                class="delete-btn"
+                (click)="deleteRecord(record.id)"
+              >
+                Delete
+              </button>
+
+            </td>
+
+          </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  }
+
+</div>

@@ -10,10 +10,11 @@ export class QualityService {
       expanded: true,
       items: [
         { label: 'Business name', checked: false, note: '' },
-        { label: 'Website / QR', checked: false, note: '' },
+        { label: 'Website', checked: false, note: '' },
+        { label: 'QR Code', checked: false, note: '' },
         { label: 'Phone number', checked: false, note: '' },
         { label: 'Address', checked: false, note: '' },
-        { label: 'Business Hours', checked: false, note: '' },
+        { label: 'Hours', checked: false, note: '' },
       ],
     },
     {

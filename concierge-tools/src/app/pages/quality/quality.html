@@ -3,13 +3,28 @@
   <!-- ACTIONS -->
 
   <div class="toolbar">
-
-    <button tabindex="-1">
-      Save QC
+    <button
+      tabindex="-1"
+      (click)="saveQc()"
+      [class.saved]="saved()"
+    >
+      {{ saved() ? '✓ Saved!' : 'Save QC' }}
     </button>
 
-    <button tabindex="-1">
+    <button
+      (click)="reset()"
+    >
+      Reset
+    </button>
+
+    <button>
       Export
+    </button>
+
+    <button
+      routerLink="/history"
+    >
+      History
     </button>
 
   </div>
@@ -48,6 +63,15 @@
       (ngModelChange)="auditDate.set($event)"
       tabindex="-1"
     />
+
+    <label class="revision-check">
+      <input
+        type="checkbox"
+        [ngModel]="revisionQc()"
+        (ngModelChange)="revisionQc.set($event)"
+      />
+      Revision QC?
+    </label>
 
   </div>
 
@@ -89,7 +113,8 @@
 
                 <input
                   type="checkbox"
-                  [(ngModel)]="item.checked"
+                  [ngModel]="item.checked"
+                  (ngModelChange)="item.checked = $event; sections.set([...sections()])"
                 />
 
                 <span class="label">
@@ -99,7 +124,8 @@
                 <input
                   class="note"
                   placeholder="Notes"
-                  [(ngModel)]="item.note"
+                  [ngModel]="item.note"
+                  (ngModelChange)="item.note = $event; sections.set([...sections()])"
                   tabindex="-1"
                 />
 
@@ -119,9 +145,36 @@
 
     <div class="notes-panel">
 
-      <h2>
-        QC Notes
-      </h2>
+      <h2>Additional Auditor Suggestions / Kudos</h2>
+
+      <textarea
+        rows="3"
+        placeholder="All Good, QC Complete, Kudos, Suggestions..."
+        [ngModel]="auditorSuggestions()"
+        (ngModelChange)="auditorSuggestions.set($event)"
+      ></textarea>
+
+      <div class="quick-comments">
+
+        <button
+          type="button"
+          (click)="auditorSuggestions.set('QC Complete')"
+        >
+          QC Complete
+        </button>
+
+        <button
+          type="button"
+          (click)="auditorSuggestions.set('All Good')"
+        >
+          All Good
+        </button>
+
+      </div>
+
+      <hr>
+      
+      <h2>QC Notes</h2>
 
       <textarea
         readonly
@@ -131,10 +184,11 @@
 
       <button
         class="copy-btn"
+        [class.copied]="notesCopied()"
         tabindex="-1"
         (click)="copyNotes()"
       >
-        Copy Notes
+        {{ notesCopied() ? '✓ Copied!' : 'Copy Notes' }}
       </button>
 
       <hr>
@@ -151,10 +205,11 @@
 
       <button
         class="copy-btn"
+        [class.copied]="excelCopied()"
         tabindex="-1"
         (click)="copyExcelOutput()"
       >
-        Copy Excel Row
+        {{ excelCopied() ? '✓ Copied!' : 'Copy Excel Row' }}
       </button>
 
     </div>
