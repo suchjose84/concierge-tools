@@ -235,6 +235,7 @@ export class QualityComponent implements OnInit{
       this.accountName(),
 
       this.getStatus('Business name'),
+      this.getStatus('Distribution'),
 
       this.getStatus('Address'),
 

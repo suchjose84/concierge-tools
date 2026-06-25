@@ -10,6 +10,7 @@ export class QualityService {
       expanded: true,
       items: [
         { label: 'Business name', checked: false, note: '' },
+        { label: 'Distribution', checked: false, note: '' },
         { label: 'Website', checked: false, note: '' },
         { label: 'QR Code', checked: false, note: '' },
         { label: 'Phone number', checked: false, note: '' },
