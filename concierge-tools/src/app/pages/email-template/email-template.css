@@ -131,6 +131,15 @@
   box-shadow: var(--vp-shadow-md);
 }
 
+.subject-btn.copied,
+.body-btn.copied {
+
+  background: #16a34a;
+
+  color: white;
+
+}
+
 /* Responsive */
 
 @media (max-width: 1100px) {

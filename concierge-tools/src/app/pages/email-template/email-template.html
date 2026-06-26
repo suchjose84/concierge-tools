@@ -3,19 +3,33 @@
     <div class="template-card">
 
       <div class="card-actions">
+
         <button
           class="subject-btn"
           type="button"
-          (click)="copy(template.subject)">
-          Subject
+          [class.copied]="subjectCopied() === template.id"
+          (click)="copy(template.subject, 'subject', template.id)"
+        >
+          {{
+            subjectCopied() === template.id
+              ? '✓ Copied!'
+              : 'Subject'
+          }}
         </button>
 
         <button
           class="body-btn"
           type="button"
-          (click)="copy(template.body)">
-          Body
+          [class.copied]="bodyCopied() === template.id"
+          (click)="copy(template.body, 'body', template.id)"
+        >
+          {{
+            bodyCopied() === template.id
+              ? '✓ Copied!'
+              : 'Body'
+          }}
         </button>
+
       </div>
 
       <span class="category">
@@ -35,9 +49,3 @@
     </div>
   }
 </div>
-
-@if (copied) {
-  <div class="success-toast">
-    {{ copied }}
-  </div>
-}

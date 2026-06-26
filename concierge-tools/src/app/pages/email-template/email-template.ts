@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { EmailTemplate } from '../../models/email-template.model';
 import { EmailTemplateService } from '../../services/email-template';
 import { FormsModule } from '@angular/forms';
@@ -12,7 +12,8 @@ import { FormsModule } from '@angular/forms';
 })
 export class EmailTemplateComponent {
   templates: EmailTemplate[] = [];
-  copied = '';
+  subjectCopied = signal<string | null>(null);
+  bodyCopied = signal<string | null>(null);
 
   constructor(
     private emailTemplateService: EmailTemplateService
@@ -20,13 +21,20 @@ export class EmailTemplateComponent {
     this.templates = this.emailTemplateService.getTemplates();
   }
 
-  copy(text: string): void {
+  copy(text: string, type: 'subject' | 'body', templateId: string): void {
     navigator.clipboard.writeText(text);
+    if (type === 'subject') {
+      this.subjectCopied.set(templateId);
+      setTimeout(() => {
+        this.subjectCopied.set(null);
+      }, 2000);
+    } else {
+      this.bodyCopied.set(templateId);
+      setTimeout(() => {
+        this.bodyCopied.set(null);
+      }, 2000);
 
-    this.copied = 'Copied!';
+    }
 
-    setTimeout(() => {
-      this.copied = '';
-    }, 2000);
   }
 }
