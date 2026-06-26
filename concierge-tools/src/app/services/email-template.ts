@@ -9,22 +9,29 @@ export class EmailTemplateService {
     {
       id: 'email-template1',
       category: 'Concierge',
-      title: 'Ad Design Details',
-      subject: 'Ad Design Details - [Account Name]',
+      title: 'Valpak Engage Email',
+      subject: 'Let’s design your Valpak Clipp ad',
       body: `Hi [Name],
 
-Congrats on your recent sale for [Account Name]!
+I’ll be the concierge assisting you in building your first Valpak Clipp ad campaign. Consider me your personal guide and go-to contact throughout the creative process. Together, we’ll handle:
 
-I’ve been assigned to this account on the Concierge Team and will be helping your client with their initial ad setup. To get things moving, please share any available assets—such as images, logos, or creative direction. If you don’t have anything yet, that’s totally fine; I’ll be connecting with your client directly to get started.
+• Collecting your logos, images, and any assets you’d like to feature  
+• Fine-tuning your offers based on decades of research  
+• Collaborating with our expert design team to create a compelling ad  
+• Reviewing and proofing your artwork to ensure it’s exactly what you want  
 
-Just a couple of quick details to confirm:
-• Has the advertiser requested a Call Tracking number?
-• If this is a CCO ad, could you provide the Deal Title (for example, $15 for $30 worth of casual dining)?
+My goal is simple: to design an ad that speaks to your audience, drives response, and delivers strong results from day one.
 
-You can reply here or reach me at 717-294-0273. I’m here to make the process as smooth as possible for you and your client.
+I’ll be giving you a call shortly to discuss the above. If you have any questions before then, please reach out!
 
-Thanks,`,
-    },
+Talk soon,
+
+Best,  
+Joe Such  
+Arts Concierge Specialist  
+717-294-0273`
+
+},
     {
       id: 'email-template2',
       category: 'Concierge',
@@ -54,29 +61,22 @@ Arts Concierge Specialist`
 {
       id: 'email-template3',
       category: 'Concierge',
-      title: 'Valpak Engage Email',
-      subject: 'Let’s design your Valpak Clipp ad',
+      title: 'Ad Design Details',
+      subject: 'Ad Design Details - [Account Name]',
       body: `Hi [Name],
 
-I’ll be the concierge assisting you in building your first Valpak Clipp ad campaign. Consider me your personal guide and go-to contact throughout the creative process. Together, we’ll handle:
+Congrats on your recent sale for [Account Name]!
 
-• Collecting your logos, images, and any assets you’d like to feature  
-• Fine-tuning your offers based on decades of research  
-• Collaborating with our expert design team to create a compelling ad  
-• Reviewing and proofing your artwork to ensure it’s exactly what you want  
+I’ve been assigned to this account on the Concierge Team and will be helping your client with their initial ad setup. To get things moving, please share any available assets—such as images, logos, or creative direction. If you don’t have anything yet, that’s totally fine; I’ll be connecting with your client directly to get started.
 
-My goal is simple: to design an ad that speaks to your audience, drives response, and delivers strong results from day one.
+Just a couple of quick details to confirm:
+• Has the advertiser requested a Call Tracking number?
+• If this is a CCO ad, could you provide the Deal Title (for example, $15 for $30 worth of casual dining)?
 
-I’ll be giving you a call shortly to discuss the above. If you have any questions before then, please reach out!
+You can reply here or reach me at 717-294-0273. I’m here to make the process as smooth as possible for you and your client.
 
-Talk soon,
-
-Best,  
-Joe Such  
-Arts Concierge Specialist  
-717-294-0273`
-
-},
+Thanks,`,
+    },
 {
       id: 'email-template4',
       category: 'Concierge',
