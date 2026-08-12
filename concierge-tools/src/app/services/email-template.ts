@@ -62,7 +62,7 @@ Arts Concierge Specialist`
       id: 'email-template3',
       category: 'Concierge',
       title: 'Ad Design Details',
-      subject: 'Ad Design Details - [Account Name]',
+      subject: 'Concierge - Ad Design Details | [Account Name]',
       body: `Hi [Name],
 
 Congrats on your recent sale for [Account Name]!
