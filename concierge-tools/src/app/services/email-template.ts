@@ -24,12 +24,7 @@ My goal is simple: to design an ad that speaks to your audience, drives response
 
 I’ll be giving you a call shortly to discuss the above. If you have any questions before then, please reach out!
 
-Talk soon,
-
-Best,  
-Joe Such  
-Arts Concierge Specialist  
-717-294-0273`
+Talk soon,`
 
 },
     {
@@ -50,12 +45,7 @@ My goal is simple: to design an ad that speaks to your audience, drives response
 
 I’ll be giving you a call shortly to discuss the above. If you have any questions before then, please reach out!
 
-Talk soon,
-
-
-Best,
-Joe Such
-Arts Concierge Specialist`
+Talk soon,`
 
 },
 {
