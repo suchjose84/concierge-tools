@@ -1,0 +1,118 @@
+<div class="deadline-container">
+
+  <!-- Form -->
+  <div class="form-section">
+
+    <div class="section-header">
+      <h2>Escalation Template</h2>
+
+      <button class="add-button" (click)="addCase()">
+        + Add Case
+      </button>
+    </div>
+
+    @for (item of cases; track $index) {
+
+      <div class="case-card">
+
+        <div class="case-header">
+          <h3>Case {{ $index + 1 }}</h3>
+
+          @if (cases.length > 1) {
+            <button
+              class="remove-button"
+              (click)="removeCase($index)">
+              Remove
+            </button>
+          }
+        </div>
+
+        <div class="form-group">
+          <label>Deadline Type:</label>
+
+          <select [(ngModel)]="item.deadlineType">
+            <option value="">Select deadline</option>
+            <option value="Order Deadline">Order Deadline</option>
+            <option value="Art Approval Due">Art Approval Due</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="dueDate-{{ $index }}">Due date:</label>
+
+          <input
+            id="dueDate-{{ $index }}"
+            class="date-input"
+            type="date"
+            [(ngModel)]="item.dueDate"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Case Number / Business Name:</label>
+
+          <input
+            type="text"
+            [(ngModel)]="item.caseBusiness"
+            placeholder="e.g. 123456 / ABC Restaurant"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Status:</label>
+
+          <textarea
+            [(ngModel)]="item.status"
+            placeholder="Enter current status...">
+          </textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Do we need to escalate to Kelly/Elvin/Uriah?</label>
+
+          <div class="radio-group">
+
+            <label>
+              <input
+                type="radio"
+                [name]="'escalate-' + $index"
+                value="Y"
+                [(ngModel)]="item.escalate"
+              />
+              Yes
+            </label>
+
+            <label>
+              <input
+                type="radio"
+                [name]="'escalate-' + $index"
+                value="N"
+                [(ngModel)]="item.escalate"
+              />
+              No
+            </label>
+
+          </div>
+        </div>
+
+      </div>
+    }
+
+  </div>
+
+  <!-- Output -->
+  <div class="output-section">
+
+    <div class="output-header">
+      <h2>Copy & Paste</h2>
+
+      <button (click)="copyToClipboard()">
+        {{ copied ? 'Copied!' : 'Copy' }}
+      </button>
+    </div>
+
+    <pre>{{ generatedText }}</pre>
+
+  </div>
+
+</div>
