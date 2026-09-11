@@ -1,8 +1,19 @@
 <div class="templates-grid">
-  @for (template of templates; track template.id) {
+  @for (template of templates; track template.id; let i = $index) {
+
     <div class="template-card">
 
       <div class="card-actions">
+
+        @if (i < 3) {
+          <button
+            class="email-btn"
+            type="button"
+            (click)="openEmail(template)"
+          >
+            New Email
+          </button>
+        }
 
         <button
           class="subject-btn"
@@ -47,5 +58,6 @@
       </div>
 
     </div>
+
   }
 </div>

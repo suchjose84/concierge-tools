@@ -13,12 +13,14 @@ export class EmailTemplateService {
       subject: 'Let’s design your Valpak Clipp ad',
       body: `Hi [Name],
 
-I’ll be the concierge assisting you in building your first Valpak Clipp ad campaign. Consider me your personal guide and go-to contact throughout the creative process. Together, we’ll handle:
+I’ll be the concierge assisting you in building your first Valpak Clipp ad campaign. Consider me your personal guide and go-to contact throughout the creative process. 
 
-• Collecting your logos, images, and any assets you’d like to feature  
-• Fine-tuning your offers based on decades of research  
-• Collaborating with our expert design team to create a compelling ad  
-• Reviewing and proofing your artwork to ensure it’s exactly what you want  
+Together, we’ll handle:
+
+Collecting your logos, images, and any assets you’d like to feature  
+Fine-tuning your offers based on decades of research  
+Collaborating with our expert design team to create a compelling ad  
+Reviewing and proofing your artwork to ensure it’s exactly what you want  
 
 My goal is simple: to design an ad that speaks to your audience, drives response, and delivers strong results from day one.
 
@@ -34,12 +36,14 @@ Talk soon,`
       subject: 'Let’s design your Clipp ad',
       body: `Hi [Name],
 
-I’ll be the concierge assisting you in building your first Clipp ad campaign. Consider me your personal guide and go-to contact throughout the creative process. Together, we’ll handle:
+I’ll be the concierge assisting you in building your first Clipp ad campaign. Consider me your personal guide and go-to contact throughout the creative process. 
 
-• Collecting your logos, images, and any assets you’d like to feature  
-• Fine-tuning your offers based on decades of research  
-• Collaborating with our expert design team to create a compelling ad  
-• Reviewing and proofing your artwork to ensure it’s exactly what you want  
+Together, we’ll handle:
+
+Collecting your logos, images, and any assets you’d like to feature  
+Fine-tuning your offers based on decades of research  
+Collaborating with our expert design team to create a compelling ad  
+Reviewing and proofing your artwork to ensure it’s exactly what you want  
 
 My goal is simple: to design an ad that speaks to your audience, drives response, and delivers strong results from day one.
 
