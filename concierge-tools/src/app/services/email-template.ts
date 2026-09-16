@@ -61,7 +61,7 @@ Talk soon,`
 
 Congrats on your recent sale for [Account Name]!
 
-I’ve been assigned to this account on the Concierge Team and will be helping your client with their initial ad setup. To get things moving, please share any available assets—such as images, logos, or creative direction. If you don’t have anything yet, that’s totally fine; I’ll be connecting with your client directly to get started.
+I’ve been assigned to this account on the Concierge Team and will be helping your client with their initial ad setup. To get things moving, please share any available assets such as images, logos, or creative direction. If you don’t have anything yet, that’s totally fine; I’ll be connecting with your client directly to get started.
 
 Just a couple of quick details to confirm:
 • Has the advertiser requested a Call Tracking number?

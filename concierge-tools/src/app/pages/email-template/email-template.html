@@ -1,3 +1,15 @@
+<div class="account-name-input">
+  <label for="accountName">Account Name</label>
+
+  <input
+    id="accountName"
+    type="text"
+    placeholder="Enter account name"
+    [ngModel]="accountName()"
+    (ngModelChange)="accountName.set($event)"
+  />
+</div>
+
 <div class="templates-grid">
   @for (template of templates; track template.id; let i = $index) {
 

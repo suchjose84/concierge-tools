@@ -14,6 +14,8 @@ export class EmailTemplateComponent {
 
   templates: EmailTemplate[] = [];
 
+  accountName = signal('');
+
   subjectCopied = signal<string | null>(null);
   bodyCopied = signal<string | null>(null);
 
@@ -32,7 +34,6 @@ export class EmailTemplateComponent {
     navigator.clipboard.writeText(text);
 
     if (type === 'subject') {
-
       this.subjectCopied.set(templateId);
 
       setTimeout(() => {
@@ -40,25 +41,49 @@ export class EmailTemplateComponent {
       }, 2000);
 
     } else {
-
       this.bodyCopied.set(templateId);
 
       setTimeout(() => {
         this.bodyCopied.set(null);
       }, 2000);
-
     }
   }
 
   openEmail(template: EmailTemplate): void {
-    const subject = encodeURIComponent(template.subject);
-    const body = encodeURIComponent(template.body);
+    const accountName = this.accountName().trim();
+
+    let subject = template.subject;
+
+    if (accountName) {
+      if (template.id === 'email-template1') {
+        subject = `Let’s design your Valpak Clipp ad - ${accountName}`;
+      }
+
+      if (template.id === 'email-template2') {
+        subject = `Let’s design your Clipp ad - ${accountName}`;
+      }
+
+      if (template.id === 'email-template3') {
+        subject = `Concierge - Ad Design Details | ${accountName}`;
+      }
+    }
+
+    const body = template.body.replace(
+      /\[Account Name\]/g,
+      accountName || '[Account Name]'
+    );
+
+    const encodedSubject = encodeURIComponent(subject);
+    const encodedBody = encodeURIComponent(body);
+
+    const cc = encodeURIComponent(
+      'jown.abrigon@valpakclipp.com'
+    );
 
     window.open(
-      `https://outlook.office.com/mail/deeplink/compose?subject=${subject}&body=${body}`,
+      `https://outlook.office.com/mail/deeplink/compose?cc=${cc}&subject=${encodedSubject}&body=${encodedBody}`,
       '_blank'
     );
   }
-
-
+  
 }
