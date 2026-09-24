@@ -10,47 +10,49 @@ export class EmailTemplateService {
       id: 'email-template1',
       category: 'Concierge',
       title: 'Valpak Engage Email',
-      subject: 'Let’s design your Valpak Clipp ad',
+      subject: 'Let’s Design Your Valpak Clipp Ad - [Account Name]',
       body: `Hi [Name],
 
-I’ll be the concierge assisting you in building your first Valpak Clipp ad campaign. Consider me your personal guide and go-to contact throughout the creative process. 
+    I’ll be the concierge assisting you in building your first Valpak Clipp ad campaign. Consider me your personal guide and go-to contact throughout the creative process.
 
-Together, we’ll handle:
+    Together, we’ll handle:
 
-Collecting your logos, images, and any assets you’d like to feature  
-Fine-tuning your offers based on decades of research  
-Collaborating with our expert design team to create a compelling ad  
-Reviewing and proofing your artwork to ensure it’s exactly what you want  
+    Collecting your logos, images, and any assets you’d like to feature
+    Fine-tuning your offers based on decades of research
+    Collaborating with our expert design team to create a compelling ad
+    Reviewing and proofing your artwork to ensure it’s exactly what you want
 
-My goal is simple: to design an ad that speaks to your audience, drives response, and delivers strong results from day one.
+    To keep your campaign on schedule, please send your design details, images, logos, and other assets by [Design Details Deadline]. This will give our graphic artist enough time to create your ad and allow time for any revisions before the [Print Date] print deadline.
 
-I’ll be giving you a call shortly to discuss the above. If you have any questions before then, please reach out!
+    My goal is simple: to design an ad that speaks to your audience, drives response, and delivers strong results from day one.
 
-Talk soon,`
+    I’ll be giving you a call shortly to discuss the above and go over the timeline. If you have any questions before then, please reach out!
 
-},
+    Talk soon,`
+    },
     {
-      id: 'email-template2',
-      category: 'Concierge',
-      title: 'Clipp Engage Email',
-      subject: 'Let’s design your Clipp ad',
-      body: `Hi [Name],
+  id: 'email-template2',
+  category: 'Concierge',
+  title: 'Clipp Engage Email',
+  subject: 'Let’s Design Your Clipp Ad - [Account Name]',
+  body: `Hi [Name],
 
-I’ll be the concierge assisting you in building your first Clipp ad campaign. Consider me your personal guide and go-to contact throughout the creative process. 
+I’ll be the concierge assisting you in building your first Clipp ad campaign. Consider me your personal guide and go-to contact throughout the creative process.
 
 Together, we’ll handle:
 
-Collecting your logos, images, and any assets you’d like to feature  
-Fine-tuning your offers based on decades of research  
-Collaborating with our expert design team to create a compelling ad  
-Reviewing and proofing your artwork to ensure it’s exactly what you want  
+Collecting your logos, images, and any assets you’d like to feature
+Fine-tuning your offers based on decades of research
+Collaborating with our expert design team to create a compelling ad
+Reviewing and proofing your artwork to ensure it’s exactly what you want
+
+To keep your campaign on schedule, please send your design details, images, logos, and other assets by [Order Deadline]. This will give our graphic artist enough time to create your ad and allow time for any revisions before the [Artwork Deadline] print deadline.
 
 My goal is simple: to design an ad that speaks to your audience, drives response, and delivers strong results from day one.
 
-I’ll be giving you a call shortly to discuss the above. If you have any questions before then, please reach out!
+I’ll be giving you a call shortly to discuss the above and go over the timeline. If you have any questions before then, please reach out!
 
 Talk soon,`
-
 },
 {
       id: 'email-template3',
