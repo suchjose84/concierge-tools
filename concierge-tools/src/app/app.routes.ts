@@ -27,4 +27,9 @@ export const routes: Routes = [
     path: 'deadline',
     component: DeadlineTemplateComponent,
   },
+  {
+    path: 'accounts', loadComponent: () => import('./pages/accounts/accounts').then(m => m.AccountsComponent)
+  }
+
+
 ];
