@@ -1,3 +1,4 @@
+
 <div class="min-h-screen bg-gray-50 p-6">
 
   <!-- Header -->
@@ -24,23 +25,94 @@
   <!-- Accounts -->
   <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
 
-    @for (account of accounts; track account.id) {
+    @for (account of accounts(); track account.id) {
 
-      <div
-        class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm"
-      >
+      <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
 
+        <!-- Account Header -->
         <div class="mb-4">
-          <h2 class="text-lg font-bold text-gray-900">
-            {{ account.account_name }}
-          </h2>
+          <div class="flex items-start justify-between gap-3">
 
-          <p class="mt-1 text-sm text-gray-500">
-            {{ account.client_timezone || 'Timezone not set' }}
-          </p>
+            <div>
+              <h2 class="text-lg font-bold text-gray-900">
+                {{ account.accountName }}
+              </h2>
+
+              <p class="mt-1 text-sm text-gray-500">
+                {{ account.clientTimezone || 'Timezone not set' }}
+              </p>
+            </div>
+
+            <span
+              class="shrink-0 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700"
+            >
+              {{ account.cases.length }}
+              {{ account.cases.length === 1 ? 'CASE' : 'CASES' }}
+            </span>
+
+          </div>
         </div>
 
-        <div class="border-t border-gray-100 pt-4">
+        <!-- Cases -->
+        <div class="space-y-3">
+
+          @for (caseItem of account.cases; track caseItem.id) {
+
+            <div class="rounded-lg border border-gray-100 bg-gray-50 p-3">
+
+              <!-- Case number + status -->
+              <div class="flex items-center justify-between gap-2">
+
+                <span class="text-sm font-semibold text-gray-900">
+                  {{ caseItem.caseNumber }}
+                </span>
+
+                <span
+                  class="rounded-full bg-white px-2 py-1 text-xs font-medium text-gray-600"
+                >
+                  {{ caseItem.status }}
+                </span>
+
+              </div>
+
+              <!-- Product -->
+              @if (caseItem.productType) {
+                <p class="mt-2 text-xs text-gray-500">
+                  {{ caseItem.productType }}
+                </p>
+              }
+
+              <!-- Deadlines -->
+              <div class="mt-3 space-y-1 text-xs text-gray-500">
+
+                @if (caseItem.orderDeadline) {
+                  <p>
+                    <span class="font-medium text-gray-700">
+                      LOF:
+                    </span>
+                    {{ caseItem.orderDeadline | date:'MMM d • h:mm a' }}
+                  </p>
+                }
+
+                @if (caseItem.artDeadline) {
+                  <p>
+                    <span class="font-medium text-gray-700">
+                      Art:
+                    </span>
+                    {{ caseItem.artDeadline | date:'MMM d • h:mm a' }}
+                  </p>
+                }
+
+              </div>
+
+            </div>
+
+          }
+
+        </div>
+
+        <!-- Account Action -->
+        <div class="mt-4 border-t border-gray-100 pt-4">
 
           <button
             type="button"

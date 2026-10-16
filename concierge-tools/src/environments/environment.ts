@@ -1,6 +1,8 @@
 export const environment = {
   production: false,
 
+  apiUrl: 'https://symmetrical-winner-vw6j5g6rpxqhxx6q-5133.app.github.dev',
+
   supabaseUrl: 'https://fksbwcpsnuwgqeruxqxy.supabase.co',
-  supabaseKey: 'sb_publishable_NVhQpaRl_RtpTXKqIFypIA_0ANyDg9z'
+  supabaseKey: 'YOUR_EXISTING_PUBLISHABLE_KEY'
 };

@@ -1,23 +1,21 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 
-import { SupabaseService } from './supabase.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccountsService {
 
-  constructor(private supabaseService: SupabaseService) {}
+  constructor(private http: HttpClient) {}
 
   async getAccounts() {
-    const { data, error } = await this.supabaseService.client
-      .from('accounts')
-      .select('*');
-
-    if (error) {
-      throw error;
-    }
-
-    return data;
+    return firstValueFrom(
+      this.http.get<any[]>(
+        `${environment.apiUrl}/api/Accounts`
+      )
+    );
   }
 }

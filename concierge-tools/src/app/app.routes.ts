@@ -29,7 +29,13 @@ export const routes: Routes = [
   },
   {
     path: 'accounts', loadComponent: () => import('./pages/accounts/accounts').then(m => m.AccountsComponent)
-  }
+  },
+  {
+    path: 'accounts/:id', loadComponent: () => import('./pages/account-workspace/account-workspace').then(m => m.AccountWorkspaceComponent)
+  },
+  {
+    path: 'cases/:id', loadComponent: () => import('./pages/case-workspace/case-workspace').then(m => m.CaseWorkspaceComponent)
+  },
 
 
 ];
