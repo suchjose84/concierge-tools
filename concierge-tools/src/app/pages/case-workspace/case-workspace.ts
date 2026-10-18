@@ -2,31 +2,11 @@
 import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { SupabaseService } from '../../services/supabase.service';
 
-interface Case {
-  id: string;
-  account_id: string;
-  case_number: string;
-  product_type: string | null;
-  status: string;
-  order_deadline: string | null;
-  art_deadline: string | null;
-  mail_date: string | null;
-  notes: string | null;
-}
+import { CasesApiService } from '../../services/cases-api.service';
+import { Case } from '../../models/case.model';
+import { Activity } from '../../models/activity.model';
 
-interface Activity {
-  id: string;
-  case_id: string;
-  activity_type: string;
-  note: string | null;
-  starting_status: string | null;
-  ending_status: string | null;
-  started_at: string;
-  ended_at: string | null;
-  duration_seconds: number;
-}
 
 @Component({
   selector: 'app-case-workspace',
@@ -38,6 +18,7 @@ export class CaseWorkspaceComponent implements OnInit, OnDestroy {
   caseItem = signal<Case | null>(null);
   activities = signal<Activity[]>([]);
 
+  isLoadingCase = true;
   showStartPrompt = false;
   activityNote = '';
   activityEndingStatus = '';
@@ -65,14 +46,19 @@ export class CaseWorkspaceComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private supabaseService: SupabaseService
+    private casesApiService: CasesApiService
   ) {}
 
   async ngOnInit(): Promise<void> {
     const caseId = this.route.snapshot.paramMap.get('id');
-    if (!caseId) return;
+
+    if (!caseId) {
+      this.setMessage('Missing case ID.', 'error');
+      return;
+    }
 
     await this.loadCase(caseId);
+
     if (this.caseItem()) {
       await this.loadActivities();
       this.showStartPrompt = true;
@@ -84,35 +70,28 @@ export class CaseWorkspaceComponent implements OnInit, OnDestroy {
   }
 
   private async loadCase(caseId: string): Promise<void> {
-    try {
-      const { data, error } = await this.supabaseService.client
-        .from('cases')
-        .select('*')
-        .eq('id', caseId)
-        .single();
+    this.isLoadingCase = true;
 
-      if (error) throw error;
+    try {
+      const data = await this.casesApiService.getCaseById(caseId);
 
       this.caseItem.set(data);
       this.activityEndingStatus = data.status;
     } catch (error) {
       console.error('Error loading case:', error);
       this.setMessage('Unable to load this case.', 'error');
+    } finally {
+      this.isLoadingCase = false;
     }
   }
 
   async loadActivities(): Promise<void> {
     const currentCase = this.caseItem();
+
     if (!currentCase) return;
 
     try {
-      const { data, error } = await this.supabaseService.client
-        .from('activities')
-        .select('*')
-        .eq('case_id', currentCase.id)
-        .order('started_at', { ascending: false });
-
-      if (error) throw error;
+      const data = await this.casesApiService.getActivities(currentCase.id);
       this.activities.set(data ?? []);
     } catch (error) {
       console.error('Error loading activities:', error);
@@ -126,7 +105,9 @@ export class CaseWorkspaceComponent implements OnInit, OnDestroy {
   }
 
   startActivity(): void {
-    if (this.isActivityRunning || this.isSaving || !this.caseItem()) return;
+    if (this.isActivityRunning || this.isSaving || !this.caseItem()) {
+      return;
+    }
 
     this.message = '';
     this.activityEndingStatus = this.caseItem()!.status;
@@ -147,10 +128,15 @@ export class CaseWorkspaceComponent implements OnInit, OnDestroy {
 
   async stopActivity(): Promise<void> {
     const currentCase = this.caseItem();
-    if (!currentCase || !this.activityStartedAt || this.isSaving) return;
+    const startedAt = this.activityStartedAt;
+
+    if (!currentCase || !startedAt || this.isSaving) return;
 
     if (!this.activityNote.trim()) {
-      this.setMessage('Please describe what you did before saving.', 'error');
+      this.setMessage(
+        'Please describe what you did before saving.',
+        'error'
+      );
       return;
     }
 
@@ -160,35 +146,30 @@ export class CaseWorkspaceComponent implements OnInit, OnDestroy {
     }
 
     this.isSaving = true;
+
     const endedAt = new Date();
     const durationSeconds = Math.floor(
-      (endedAt.getTime() - this.activityStartedAt.getTime()) / 1000
+      (endedAt.getTime() - startedAt.getTime()) / 1000
     );
 
     try {
-      const { error } = await this.supabaseService.client.rpc(
-        'save_case_activity',
-        {
-          p_case_id: currentCase.id,
-          p_ending_status: this.activityEndingStatus,
-          p_note: this.activityNote.trim(),
-          p_started_at: this.activityStartedAt.toISOString(),
-          p_ended_at: endedAt.toISOString(),
-          p_duration_seconds: durationSeconds
-        }
-      );
-
-      if (error) throw error;
-
-      this.caseItem.update(current =>
-        current ? { ...current, status: this.activityEndingStatus } : current
-      );
+      await this.casesApiService.saveActivity(currentCase.id, {
+        endingStatus: this.activityEndingStatus,
+        note: this.activityNote.trim(),
+        startedAt: startedAt.toISOString(),
+        endedAt: endedAt.toISOString(),
+        durationSeconds
+      });
 
       this.setMessage('Activity saved successfully.', 'success');
+
       this.resetActivity();
+
+      await this.loadCase(currentCase.id);
       await this.loadActivities();
     } catch (error) {
       console.error('Error saving activity:', error);
+
       this.setMessage(
         'Could not save activity. Your timer is still running; try saving again.',
         'error'
@@ -234,7 +215,10 @@ export class CaseWorkspaceComponent implements OnInit, OnDestroy {
   }
 
   goBack(): void {
-    const accountId = this.caseItem()?.account_id;
-    this.router.navigate(accountId ? ['/accounts', accountId] : ['/accounts']);
+    const accountId = this.caseItem()?.accountId;
+
+    this.router.navigate(
+      accountId ? ['/accounts', accountId] : ['/accounts']
+    );
   }
 }

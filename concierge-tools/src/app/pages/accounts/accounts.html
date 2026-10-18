@@ -1,13 +1,8 @@
 
 <div class="min-h-screen bg-gray-50 p-6">
-
-  <!-- Header -->
   <div class="mb-6 flex items-center justify-between">
     <div>
-      <h1 class="text-2xl font-bold text-gray-900">
-        Accounts
-      </h1>
-
+      <h1 class="text-2xl font-bold text-gray-900">Accounts</h1>
       <p class="mt-1 text-sm text-gray-500">
         Current accounts and active cases
       </p>
@@ -16,118 +11,347 @@
     <button
       type="button"
       class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-      (click)="createAccount()"
-    >
-      + New Account
+      (click)="openCreateForm()">
+      + New Account / Cases
     </button>
   </div>
 
-  <!-- Accounts -->
-  <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+  @if (successMessage()) {
+    <div class="mb-4 rounded-lg bg-green-50 p-3 text-sm text-green-700">
+      {{ successMessage() }}
+    </div>
+  }
 
-    @for (account of accounts(); track account.id) {
+  @if (errorMessage()) {
+    <div class="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">
+      {{ errorMessage() }}
+    </div>
+  }
 
-      <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+  @if (showForm()) {
+    <div class="mb-8 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+      <div class="mb-5 flex items-center justify-between">
+        <h2 class="text-xl font-bold text-gray-900">
+          Add New Account and Cases
+        </h2>
 
-        <!-- Account Header -->
-        <div class="mb-4">
-          <div class="flex items-start justify-between gap-3">
+        <button
+          type="button"
+          class="text-sm text-gray-500 hover:text-gray-800"
+          (click)="closeForm()">
+          Cancel
+        </button>
+      </div>
 
+      <form [formGroup]="form" (ngSubmit)="saveAccountAndCases()">
+
+        <!-- Account Details -->
+        <section class="mb-8">
+          <h3 class="mb-4 text-lg font-semibold text-gray-800">
+            Account Details
+          </h3>
+
+          <div class="grid gap-4 md:grid-cols-2">
             <div>
-              <h2 class="text-lg font-bold text-gray-900">
-                {{ account.accountName }}
-              </h2>
-
-              <p class="mt-1 text-sm text-gray-500">
-                {{ account.clientTimezone || 'Timezone not set' }}
-              </p>
+              <label class="mb-1 block text-sm">
+                Account Name *
+              </label>
+              <input
+                formControlName="accountName"
+                class="w-full rounded-lg border p-2.5"
+                placeholder="Account name" />
             </div>
 
-            <span
-              class="shrink-0 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700"
-            >
-              {{ account.cases.length }}
-              {{ account.cases.length === 1 ? 'CASE' : 'CASES' }}
-            </span>
+            <div>
+              <label class="mb-1 block text-sm">
+                Client Name
+              </label>
+              <input
+                formControlName="clientName"
+                class="w-full rounded-lg border p-2.5" />
+            </div>
 
+            <div>
+              <label class="mb-1 block text-sm">
+                Client Email
+              </label>
+              <input
+                type="email"
+                formControlName="clientEmail"
+                class="w-full rounded-lg border p-2.5" />
+            </div>
+
+            <div>
+              <label class="mb-1 block text-sm">
+                Client Phone
+              </label>
+              <input
+                formControlName="clientPhone"
+                class="w-full rounded-lg border p-2.5" />
+            </div>
+
+            <div>
+              <label class="mb-1 block text-sm">
+                Client Timezone
+              </label>
+              <select
+                formControlName="clientTimezone"
+                class="w-full rounded-lg border p-2.5">
+                <option value="">Select timezone</option>
+                @for (timezone of timezones; track timezone) {
+                  <option [value]="timezone">
+                    {{ timezone }}
+                  </option>
+                }
+              </select>
+            </div>
+
+            <div>
+              <label class="mb-1 block text-sm">
+                Sales Rep Name
+              </label>
+              <input
+                formControlName="salesRepName"
+                class="w-full rounded-lg border p-2.5" />
+            </div>
+
+            <div>
+              <label class="mb-1 block text-sm">
+                Sales Rep Email
+              </label>
+              <input
+                type="email"
+                formControlName="salesRepEmail"
+                class="w-full rounded-lg border p-2.5" />
+            </div>
+
+            <div>
+              <label class="mb-1 block text-sm">
+                Sales Rep Phone
+              </label>
+              <input
+                formControlName="salesRepPhone"
+                class="w-full rounded-lg border p-2.5" />
+            </div>
+          </div>
+        </section>
+
+        <!-- Cases -->
+        <section formArrayName="cases" class="space-y-6">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold text-gray-800">
+              Cases
+            </h3>
+
+            <button
+              type="button"
+              class="rounded-lg border border-blue-600 px-3 py-2 text-sm font-semibold text-blue-600 hover:bg-blue-50"
+              (click)="addCase()">
+              + Add Another Case
+            </button>
+          </div>
+
+          @for (caseGroup of cases.controls; track $index; let i = $index) {
+            <div
+              [formGroupName]="i"
+              class="rounded-lg border border-gray-200 bg-gray-50 p-4">
+
+              <div class="mb-4 flex items-center justify-between">
+                <h4 class="font-semibold text-gray-800">
+                  Case {{ i + 1 }}
+                </h4>
+
+                @if (cases.length > 1) {
+                  <button
+                    type="button"
+                    class="text-sm text-red-600 hover:text-red-800"
+                    (click)="removeCase(i)">
+                    Remove
+                  </button>
+                }
+              </div>
+
+              <div class="grid gap-4 md:grid-cols-2">
+                <div>
+                  <label class="mb-1 block text-sm">
+                    Case Number *
+                  </label>
+                  <input
+                    formControlName="caseNumber"
+                    class="w-full rounded-lg border p-2.5"
+                    placeholder="Case number" />
+                </div>
+
+                <div>
+                  <label class="mb-1 block text-sm">
+                    Product Type
+                  </label>
+                  <input
+                    formControlName="productType"
+                    class="w-full rounded-lg border p-2.5"
+                    placeholder="Enter product type" />
+                </div>
+
+                <div>
+                  <label class="mb-1 block text-sm">
+                    Order Deadline
+                  </label>
+                  <input
+                    type="text"
+                    formControlName="orderDeadline"
+                    class="w-full rounded-lg border p-2.5"
+                    placeholder="10/27/2026 2:00 PM" />
+                </div>
+
+                <div>
+                  <label class="mb-1 block text-sm">
+                    Art Deadline
+                  </label>
+                  <input
+                    type="text"
+                    formControlName="artDeadline"
+                    class="w-full rounded-lg border p-2.5"
+                    placeholder="10/27/2026 2:00 PM" />
+                </div>
+
+                <div>
+                  <label class="mb-1 block text-sm">
+                    Mailing Date
+                  </label>
+                  <input
+                    type="text"
+                    formControlName="mailDate"
+                    class="w-full rounded-lg border p-2.5"
+                    placeholder="11/6/2026" />
+                </div>
+
+                <div>
+                  <label class="mb-1 block text-sm">
+                    Status
+                  </label>
+                  <input
+                    value="Pending Rep Action"
+                    readonly
+                    class="w-full rounded-lg border bg-gray-100 p-2.5 text-gray-600" />
+                </div>
+
+                <div class="md:col-span-2">
+                  <label class="mb-1 block text-sm">
+                    Notes
+                  </label>
+                  <textarea
+                    formControlName="notes"
+                    rows="3"
+                    class="w-full rounded-lg border p-2.5"
+                    placeholder="Optional notes"></textarea>
+                </div>
+              </div>
+            </div>
+          }
+        </section>
+
+        <!-- Form Actions -->
+        <div class="mt-6 flex justify-end gap-3">
+          <button
+            type="button"
+            class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700"
+            (click)="closeForm()">
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            [disabled]="saving()"
+            class="rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50">
+            {{ saving() ? 'Saving...' : 'Create Account and Cases' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+  
+  <!-- Existing Accounts -->
+  <div class="grid items-stretch gap-4 md:grid-cols-2 xl:grid-cols-3">
+    @for (account of accounts(); track account.id) {
+      <div
+        class="flex h-full min-h-[280px] flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+
+        <!-- Account Information -->
+        <div>
+          <h2 class="text-lg font-bold text-gray-900">
+            {{ account.accountName }}
+          </h2>
+
+          <p class="mt-1 text-sm text-gray-500">
+            {{ account.clientTimezone || 'Timezone not specified' }}
+          </p>
+
+          <p class="mt-2 text-sm text-gray-600">
+            {{ account.cases.length }}
+            active case(s)
+          </p>
+        </div>
+
+        <!-- Deadline Information -->
+        <div class="mt-5 flex-1">
+          <div class="rounded-lg bg-gray-50 p-4">
+            <p class="text-xs font-medium uppercase tracking-wide text-gray-500">
+              Nearest Deadline
+            </p>
+
+            <p
+              class="mt-1 text-base font-bold"
+              [class.text-red-600]="needsAttention(account) ||
+                getDeadlineLabel(account).startsWith('Overdue')"
+              [class.text-gray-800]="!needsAttention(account) &&
+                !getDeadlineLabel(account).startsWith('Overdue')">
+              {{ getDeadlineLabel(account) }}
+            </p>
+          </div>
+
+          <!-- Priority Alert -->
+          <div class="mt-3 min-h-[76px]">
+            @if (needsAttention(account)) {
+              <div class="rounded-lg border border-red-200 bg-red-50 p-3">
+                <p class="text-sm font-semibold text-red-700">
+                  <span aria-hidden="true">⚠ </span>
+                  {{ getPendingRepActionCount(account) }}
+                  {{ getPendingRepActionCount(account) === 1 ? 'case' : 'cases' }}
+                  need attention
+                </p>
+
+                <p class="mt-1 text-xs text-red-600">
+                  Waiting for design details or ad copy from the sales rep/client.
+                </p>
+              </div>
+            } @else {
+              <div class="rounded-lg border border-gray-100 bg-gray-50 p-3">
+                <p class="text-sm text-gray-500">
+                  No urgent pending-action deadlines
+                </p>
+              </div>
+            }
           </div>
         </div>
 
-        <!-- Cases -->
-        <div class="space-y-3">
-
-          @for (caseItem of account.cases; track caseItem.id) {
-
-            <div class="rounded-lg border border-gray-100 bg-gray-50 p-3">
-
-              <!-- Case number + status -->
-              <div class="flex items-center justify-between gap-2">
-
-                <span class="text-sm font-semibold text-gray-900">
-                  {{ caseItem.caseNumber }}
-                </span>
-
-                <span
-                  class="rounded-full bg-white px-2 py-1 text-xs font-medium text-gray-600"
-                >
-                  {{ caseItem.status }}
-                </span>
-
-              </div>
-
-              <!-- Product -->
-              @if (caseItem.productType) {
-                <p class="mt-2 text-xs text-gray-500">
-                  {{ caseItem.productType }}
-                </p>
-              }
-
-              <!-- Deadlines -->
-              <div class="mt-3 space-y-1 text-xs text-gray-500">
-
-                @if (caseItem.orderDeadline) {
-                  <p>
-                    <span class="font-medium text-gray-700">
-                      LOF:
-                    </span>
-                    {{ caseItem.orderDeadline | date:'MMM d • h:mm a' }}
-                  </p>
-                }
-
-                @if (caseItem.artDeadline) {
-                  <p>
-                    <span class="font-medium text-gray-700">
-                      Art:
-                    </span>
-                    {{ caseItem.artDeadline | date:'MMM d • h:mm a' }}
-                  </p>
-                }
-
-              </div>
-
-            </div>
-
-          }
-
-        </div>
-
-        <!-- Account Action -->
-        <div class="mt-4 border-t border-gray-100 pt-4">
-
+        <!-- Actions -->
+        <div class="mt-4 flex gap-2">
           <button
             type="button"
-            class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-            (click)="openAccount(account)"
-          >
+            class="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+            (click)="openAccount(account)">
             Open Account
           </button>
 
+          <button
+            type="button"
+            class="flex-1 rounded-lg border border-red-200 px-3 py-2 text-sm font-semibold text-red-600 hover:bg-red-50"
+            (click)="closeAccount(account)">
+            Close Account
+          </button>
         </div>
-
       </div>
-
     }
-
   </div>
 
 </div>
