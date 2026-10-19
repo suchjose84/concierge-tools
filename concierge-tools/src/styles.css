@@ -1,5 +1,21 @@
 @import "tailwindcss";
 
+:root {
+  --bg-app: #0f172a;
+  --bg-panel: #182235;
+  --bg-elevated: #202d42;
+
+  --text-primary: #f1f5f9;
+  --text-secondary: #a8b5c7;
+
+  --accent: #608cff;
+  --border: #334155;
+
+  --alert-danger: #f87171;
+  --alert-warning: #fbbf24;
+  --alert-success: #4ade80;
+}
+
 /* Reset */
 html,
 body {
@@ -9,8 +25,6 @@ body {
 }
 
 body {
-  background: var(--vp-bg);
-  color: var(--vp-text);
   font-family: Inter, Arial, sans-serif;
 }
 

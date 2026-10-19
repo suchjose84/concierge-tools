@@ -1,357 +1,311 @@
-
-<div class="min-h-screen bg-gray-50 p-6">
-  <div class="mb-6 flex items-center justify-between">
-    <div>
-      <h1 class="text-2xl font-bold text-gray-900">Accounts</h1>
-      <p class="mt-1 text-sm text-gray-500">
-        Current accounts and active cases
-      </p>
+<main class="accounts-page">
+  <header class="accounts-toolbar">
+    <div class="accounts-heading">
+      <h1>Accounts</h1>
+      <p class="accounts-subtitle">Manage client accounts and cases.</p>
     </div>
 
-    <button
-      type="button"
-      class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-      (click)="openCreateForm()">
-      + New Account / Cases
+    <nav class="account-filters" aria-label="Filter accounts by case status">
+      <button type="button" class="filter-button filter-all"
+        [class.is-active]="statusFilter === 'All Accounts'"
+        (click)="setStatusFilter('All Accounts')">
+        <span class="filter-symbol" aria-hidden="true">▦</span>
+        <span>All Accounts</span>
+        <span class="filter-count">{{ getStatusFilterCount('All Accounts') }}</span>
+      </button>
+      <button type="button" class="filter-button filter-pending"
+        [class.is-active]="statusFilter === 'Pending Rep Action'"
+        (click)="setStatusFilter('Pending Rep Action')">
+        <span class="filter-dot" aria-hidden="true"></span>
+        <span>Pending</span>
+        <span class="filter-count">{{ getStatusFilterCount('Pending Rep Action') }}</span>
+      </button>
+      <button type="button" class="filter-button filter-working"
+        [class.is-active]="statusFilter === 'Working'"
+        (click)="setStatusFilter('Working')">
+        <span class="filter-dot" aria-hidden="true"></span>
+        <span>Working</span>
+        <span class="filter-count">{{ getStatusFilterCount('Working') }}</span>
+      </button>
+      <button type="button" class="filter-button filter-proof"
+        [class.is-active]="statusFilter === 'Proof Out'"
+        (click)="setStatusFilter('Proof Out')">
+        <span class="filter-dot" aria-hidden="true"></span>
+        <span>Proof Out</span>
+        <span class="filter-count">{{ getStatusFilterCount('Proof Out') }}</span>
+      </button>
+      <button type="button" class="filter-button filter-completed"
+        [class.is-active]="statusFilter === 'Completed'"
+        (click)="setStatusFilter('Completed')">
+        <span class="filter-dot" aria-hidden="true"></span>
+        <span>Completed</span>
+        <span class="filter-count">{{ getStatusFilterCount('Completed') }}</span>
+      </button>
+    </nav>
+
+    <label class="timezone-filter">
+      <span class="timezone-icon" aria-hidden="true">◷</span>
+      <span class="timezone-select-wrap">
+        <span class="timezone-label">Timezone</span>
+        <select aria-label="Filter by timezone" [value]="timezoneFilter" (change)="setTimezoneFilter($any($event.target).value)">
+          <option value="All Timezones">All</option>
+          <option value="Eastern">Eastern</option>
+          <option value="Central">Central</option>
+          <option value="Mountain">Mountain</option>
+          <option value="Pacific">Pacific</option>
+        </select>
+      </span>
+      <span class="select-chevron" aria-hidden="true">⌄</span>
+    </label>
+
+    <button type="button" class="button button-primary create-account-button new-account-button" (click)="openCreateForm()">
+      <span aria-hidden="true" class="button-icon">+</span>
+      New Account / Cases
     </button>
-  </div>
+  </header>
 
   @if (successMessage()) {
-    <div class="mb-4 rounded-lg bg-green-50 p-3 text-sm text-green-700">
-      {{ successMessage() }}
+    <div class="feedback-message feedback-success" role="status">
+      <span class="feedback-icon" aria-hidden="true">✓</span>
+      <span>{{ successMessage() }}</span>
     </div>
   }
 
   @if (errorMessage()) {
-    <div class="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">
-      {{ errorMessage() }}
+    <div class="feedback-message feedback-error" role="alert">
+      <span class="feedback-icon" aria-hidden="true">!</span>
+      <span>{{ errorMessage() }}</span>
     </div>
   }
 
   @if (showForm()) {
-    <div class="mb-8 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-      <div class="mb-5 flex items-center justify-between">
-        <h2 class="text-xl font-bold text-gray-900">
-          Add New Account and Cases
-        </h2>
-
-        <button
-          type="button"
-          class="text-sm text-gray-500 hover:text-gray-800"
-          (click)="closeForm()">
-          Cancel
-        </button>
+    <section class="account-form-panel">
+      <div class="panel-heading">
+        <div>
+          <p class="section-eyebrow">ACCOUNT SETUP</p>
+          <h2>Add New Account and Cases</h2>
+          <p class="panel-description">Enter the client details and add one or more cases.</p>
+        </div>
+        <button type="button" class="button button-ghost" (click)="closeForm()">Cancel</button>
       </div>
 
       <form [formGroup]="form" (ngSubmit)="saveAccountAndCases()">
+        <section class="form-section">
+          <h3 class="form-section-title">Account Details</h3>
 
-        <!-- Account Details -->
-        <section class="mb-8">
-          <h3 class="mb-4 text-lg font-semibold text-gray-800">
-            Account Details
-          </h3>
-
-          <div class="grid gap-4 md:grid-cols-2">
-            <div>
-              <label class="mb-1 block text-sm">
-                Account Name *
-              </label>
-              <input
-                formControlName="accountName"
-                class="w-full rounded-lg border p-2.5"
-                placeholder="Account name" />
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="accountName">Account Name <span class="required-mark">*</span></label>
+              <input id="accountName" formControlName="accountName" placeholder="Account name" />
             </div>
 
-            <div>
-              <label class="mb-1 block text-sm">
-                Client Name
-              </label>
-              <input
-                formControlName="clientName"
-                class="w-full rounded-lg border p-2.5" />
+            <div class="form-field">
+              <label for="clientName">Client Name</label>
+              <input id="clientName" formControlName="clientName" placeholder="Client name" />
             </div>
 
-            <div>
-              <label class="mb-1 block text-sm">
-                Client Email
-              </label>
-              <input
-                type="email"
-                formControlName="clientEmail"
-                class="w-full rounded-lg border p-2.5" />
+            <div class="form-field">
+              <label for="clientEmail">Client Email</label>
+              <input id="clientEmail" type="email" formControlName="clientEmail" placeholder="name@company.com" />
             </div>
 
-            <div>
-              <label class="mb-1 block text-sm">
-                Client Phone
-              </label>
-              <input
-                formControlName="clientPhone"
-                class="w-full rounded-lg border p-2.5" />
+            <div class="form-field">
+              <label for="clientPhone">Client Phone</label>
+              <input id="clientPhone" formControlName="clientPhone" placeholder="Phone number" />
             </div>
 
-            <div>
-              <label class="mb-1 block text-sm">
-                Client Timezone
-              </label>
-              <select
-                formControlName="clientTimezone"
-                class="w-full rounded-lg border p-2.5">
+            <div class="form-field">
+              <label for="clientTimezone">Client Timezone</label>
+              <select id="clientTimezone" formControlName="clientTimezone">
                 <option value="">Select timezone</option>
                 @for (timezone of timezones; track timezone) {
-                  <option [value]="timezone">
-                    {{ timezone }}
-                  </option>
+                  <option [value]="timezone">{{ timezone }}</option>
                 }
               </select>
             </div>
 
-            <div>
-              <label class="mb-1 block text-sm">
-                Sales Rep Name
-              </label>
-              <input
-                formControlName="salesRepName"
-                class="w-full rounded-lg border p-2.5" />
+            <div class="form-field">
+              <label for="salesRepName">Sales Rep Name</label>
+              <input id="salesRepName" formControlName="salesRepName" placeholder="Sales rep name" />
             </div>
 
-            <div>
-              <label class="mb-1 block text-sm">
-                Sales Rep Email
-              </label>
-              <input
-                type="email"
-                formControlName="salesRepEmail"
-                class="w-full rounded-lg border p-2.5" />
+            <div class="form-field">
+              <label for="salesRepEmail">Sales Rep Email</label>
+              <input id="salesRepEmail" type="email" formControlName="salesRepEmail" placeholder="name@company.com" />
             </div>
 
-            <div>
-              <label class="mb-1 block text-sm">
-                Sales Rep Phone
-              </label>
-              <input
-                formControlName="salesRepPhone"
-                class="w-full rounded-lg border p-2.5" />
+            <div class="form-field">
+              <label for="salesRepPhone">Sales Rep Phone</label>
+              <input id="salesRepPhone" formControlName="salesRepPhone" placeholder="Phone number" />
             </div>
           </div>
         </section>
 
-        <!-- Cases -->
-        <section formArrayName="cases" class="space-y-6">
-          <div class="flex items-center justify-between">
-            <h3 class="text-lg font-semibold text-gray-800">
-              Cases
-            </h3>
-
-            <button
-              type="button"
-              class="rounded-lg border border-blue-600 px-3 py-2 text-sm font-semibold text-blue-600 hover:bg-blue-50"
-              (click)="addCase()">
-              + Add Another Case
+        <section formArrayName="cases" class="form-section cases-form-section">
+          <div class="form-section-heading">
+            <div>
+              <h3 class="form-section-title">Cases</h3>
+              <p class="form-section-help">Add the case details and relevant deadlines.</p>
+            </div>
+            <button type="button" class="button button-secondary" (click)="addCase()">
+              <span aria-hidden="true">+</span> Add Another Case
             </button>
           </div>
 
           @for (caseGroup of cases.controls; track $index; let i = $index) {
-            <div
-              [formGroupName]="i"
-              class="rounded-lg border border-gray-200 bg-gray-50 p-4">
-
-              <div class="mb-4 flex items-center justify-between">
-                <h4 class="font-semibold text-gray-800">
-                  Case {{ i + 1 }}
-                </h4>
-
+            <div [formGroupName]="i" class="case-form-card">
+              <div class="case-form-heading">
+                <h4>Case {{ i + 1 }}</h4>
                 @if (cases.length > 1) {
-                  <button
-                    type="button"
-                    class="text-sm text-red-600 hover:text-red-800"
-                    (click)="removeCase(i)">
-                    Remove
-                  </button>
+                  <button type="button" class="button button-danger-ghost" (click)="removeCase(i)">Remove case</button>
                 }
               </div>
 
-              <div class="grid gap-4 md:grid-cols-2">
-                <div>
-                  <label class="mb-1 block text-sm">
-                    Case Number *
-                  </label>
-                  <input
-                    formControlName="caseNumber"
-                    class="w-full rounded-lg border p-2.5"
-                    placeholder="Case number" />
+              <div class="form-grid">
+                <div class="form-field">
+                  <label [for]="'caseNumber-' + i">Case Number <span class="required-mark">*</span></label>
+                  <input [id]="'caseNumber-' + i" formControlName="caseNumber" placeholder="Case number" />
                 </div>
 
-                <div>
-                  <label class="mb-1 block text-sm">
-                    Product Type
-                  </label>
-                  <input
-                    formControlName="productType"
-                    class="w-full rounded-lg border p-2.5"
-                    placeholder="Enter product type" />
+                <div class="form-field">
+                  <label [for]="'productType-' + i">Product Type</label>
+                  <input [id]="'productType-' + i" formControlName="productType" placeholder="Enter product type" />
                 </div>
 
-                <div>
-                  <label class="mb-1 block text-sm">
-                    Order Deadline
-                  </label>
-                  <input
-                    type="text"
-                    formControlName="orderDeadline"
-                    class="w-full rounded-lg border p-2.5"
-                    placeholder="10/27/2026 2:00 PM" />
+                <div class="form-field">
+                  <label [for]="'orderDeadline-' + i">Order Deadline</label>
+                  <input [id]="'orderDeadline-' + i" type="text" formControlName="orderDeadline" placeholder="10/27/2026 2:00 PM" />
                 </div>
 
-                <div>
-                  <label class="mb-1 block text-sm">
-                    Art Deadline
-                  </label>
-                  <input
-                    type="text"
-                    formControlName="artDeadline"
-                    class="w-full rounded-lg border p-2.5"
-                    placeholder="10/27/2026 2:00 PM" />
+                <div class="form-field">
+                  <label [for]="'artDeadline-' + i">Art Deadline</label>
+                  <input [id]="'artDeadline-' + i" type="text" formControlName="artDeadline" placeholder="10/27/2026 2:00 PM" />
                 </div>
 
-                <div>
-                  <label class="mb-1 block text-sm">
-                    Mailing Date
-                  </label>
-                  <input
-                    type="text"
-                    formControlName="mailDate"
-                    class="w-full rounded-lg border p-2.5"
-                    placeholder="11/6/2026" />
+                <div class="form-field">
+                  <label [for]="'mailDate-' + i">Mailing Date</label>
+                  <input [id]="'mailDate-' + i" type="text" formControlName="mailDate" placeholder="11/6/2026" />
                 </div>
 
-                <div>
-                  <label class="mb-1 block text-sm">
-                    Status
-                  </label>
-                  <input
-                    value="Pending Rep Action"
-                    readonly
-                    class="w-full rounded-lg border bg-gray-100 p-2.5 text-gray-600" />
+                <div class="form-field">
+                  <label [for]="'caseStatus-' + i">Initial Status</label>
+                  <input [id]="'caseStatus-' + i" value="Pending Rep Action" readonly class="input-readonly" />
                 </div>
 
-                <div class="md:col-span-2">
-                  <label class="mb-1 block text-sm">
-                    Notes
-                  </label>
-                  <textarea
-                    formControlName="notes"
-                    rows="3"
-                    class="w-full rounded-lg border p-2.5"
-                    placeholder="Optional notes"></textarea>
+                <div class="form-field form-field-full">
+                  <label [for]="'caseNotes-' + i">Notes</label>
+                  <textarea [id]="'caseNotes-' + i" formControlName="notes" rows="3" placeholder="Optional notes"></textarea>
                 </div>
               </div>
             </div>
           }
         </section>
 
-        <!-- Form Actions -->
-        <div class="mt-6 flex justify-end gap-3">
-          <button
-            type="button"
-            class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700"
-            (click)="closeForm()">
-            Cancel
-          </button>
-
-          <button
-            type="submit"
-            [disabled]="saving()"
-            class="rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50">
+        <div class="form-actions">
+          <button type="button" class="button button-secondary" (click)="closeForm()">Cancel</button>
+          <button type="submit" class="button button-primary" [disabled]="saving()">
             {{ saving() ? 'Saving...' : 'Create Account and Cases' }}
           </button>
         </div>
       </form>
-    </div>
+    </section>
   }
-  
-  <!-- Existing Accounts -->
-  <div class="grid items-stretch gap-4 md:grid-cols-2 xl:grid-cols-3">
-    @for (account of accounts(); track account.id) {
-      <div
-        class="flex h-full min-h-[280px] flex-col rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
 
-        <!-- Account Information -->
-        <div>
-          <h2 class="text-lg font-bold text-gray-900">
-            {{ account.accountName }}
-          </h2>
-
-          <p class="mt-1 text-sm text-gray-500">
-            {{ account.clientTimezone || 'Timezone not specified' }}
-          </p>
-
-          <p class="mt-2 text-sm text-gray-600">
-            {{ account.cases.length }}
-            active case(s)
-          </p>
-        </div>
-
-        <!-- Deadline Information -->
-        <div class="mt-5 flex-1">
-          <div class="rounded-lg bg-gray-50 p-4">
-            <p class="text-xs font-medium uppercase tracking-wide text-gray-500">
-              Nearest Deadline
-            </p>
-
-            <p
-              class="mt-1 text-base font-bold"
-              [class.text-red-600]="needsAttention(account) ||
-                getDeadlineLabel(account).startsWith('Overdue')"
-              [class.text-gray-800]="!needsAttention(account) &&
-                !getDeadlineLabel(account).startsWith('Overdue')">
-              {{ getDeadlineLabel(account) }}
-            </p>
-          </div>
-
-          <!-- Priority Alert -->
-          <div class="mt-3 min-h-[76px]">
-            @if (needsAttention(account)) {
-              <div class="rounded-lg border border-red-200 bg-red-50 p-3">
-                <p class="text-sm font-semibold text-red-700">
-                  <span aria-hidden="true">⚠ </span>
-                  {{ getPendingRepActionCount(account) }}
-                  {{ getPendingRepActionCount(account) === 1 ? 'case' : 'cases' }}
-                  need attention
-                </p>
-
-                <p class="mt-1 text-xs text-red-600">
-                  Waiting for design details or ad copy from the sales rep/client.
-                </p>
-              </div>
-            } @else {
-              <div class="rounded-lg border border-gray-100 bg-gray-50 p-3">
-                <p class="text-sm text-gray-500">
-                  No urgent pending-action deadlines
-                </p>
-              </div>
-            }
-          </div>
-        </div>
-
-        <!-- Actions -->
-        <div class="mt-4 flex gap-2">
-          <button
-            type="button"
-            class="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
-            (click)="openAccount(account)">
-            Open Account
-          </button>
-
-          <button
-            type="button"
-            class="flex-1 rounded-lg border border-red-200 px-3 py-2 text-sm font-semibold text-red-600 hover:bg-red-50"
-            (click)="closeAccount(account)">
-            Close Account
-          </button>
-        </div>
+  <section class="account-list-section">
+    <div class="list-heading">
+      <div>
+        <p class="section-eyebrow">YOUR WORKSPACE</p>
       </div>
-    }
-  </div>
+    </div>
 
-</div>
+    <div class="accounts-table-wrap">
+      <table class="accounts-table">
+        <thead>
+          <tr>
+            <th scope="col">Account</th>
+            <th scope="col">Active Cases</th>
+            <th scope="col">Nearest Deadline</th>
+            <th scope="col">Pending Action</th>
+            <th scope="col" class="actions-heading">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (account of filteredAccounts(); track account.id) {
+            <tr>
+              <td data-label="Account">
+                <div class="account-name-cell">
+                  <div class="account-avatar" aria-hidden="true">{{ account.accountName.charAt(0) }}</div>
+                  <div class="account-name-details">
+                    <span class="account-name">{{ account.accountName }}</span>
+                    <span class="account-timezone">{{ account.clientTimezone || 'Timezone not specified' }}</span>
+                  </div>
+                </div>
+              </td>
+
+              <td data-label="Active Cases">
+                <div class="case-summary-cell">
+                  <div>
+                    <span class="case-count">{{ account.cases.length }}</span>
+                    <span class="muted-inline">{{ account.cases.length === 1 ? 'case' : 'cases' }}</span>
+                  </div>
+                  @if (account.cases.length > 0) {
+                    <div class="first-case-status">
+                      <span class="first-case-label">First case</span>
+                      <span class="case-status-badge">{{ account.cases[0].status }}</span>
+                    </div>
+                  }
+                </div>
+              </td>
+
+              <td data-label="Nearest Deadline">
+                <span
+                  class="deadline-value"
+                  [class.deadline-urgent]="needsAttention(account) || getDeadlineLabel(account).startsWith('Overdue')"
+                  [class.deadline-normal]="!needsAttention(account) && !getDeadlineLabel(account).startsWith('Overdue')">
+                  {{ getDeadlineLabel(account) }}
+                </span>
+              </td>
+
+              <td data-label="Pending Action">
+                @if (needsAttention(account)) {
+                  <div class="attention-indicator attention-urgent">
+                    <span class="status-dot" aria-hidden="true"></span>
+                    <span>
+                      <strong>{{ getPendingRepActionCount(account) }}
+                      {{ getPendingRepActionCount(account) === 1 ? 'case' : 'cases' }}</strong>
+                      <small>Need attention</small>
+                    </span>
+                  </div>
+                } @else {
+                  <div class="attention-indicator attention-clear">
+                    <span class="status-dot" aria-hidden="true"></span>
+                    <span>
+                      <strong>All clear</strong>
+                      <small>No urgent pending action</small>
+                    </span>
+                  </div>
+                }
+              </td>
+
+              <td data-label="Actions">
+                <div class="table-actions">
+                  <button type="button" class="button button-open" (click)="openAccount(account)">Open Account</button>
+                  <button type="button" class="button button-close" (click)="closeAccount(account)">Close</button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="empty-state">
+                <div class="empty-state-icon" aria-hidden="true">▤</div>
+                <strong>No matching accounts</strong>
+                <span>Try another status or timezone filter.</span>
+                <button type="button" class="button button-secondary" (click)="resetFilters()">Clear filters</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>

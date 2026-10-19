@@ -1,0 +1,251 @@
+<div class="workspace-container">
+
+  @if (isLoadingCase()) {
+    <div class="loading-state">
+      <div class="loading-spinner"></div>
+      <span>Loading workspace...</span>
+    </div>
+  } @else {
+
+    <!-- Compact Header -->
+    <header class="workspace-header">
+      <button type="button" class="back-link" (click)="goBack()">
+        <span class="back-arrow">←</span>
+        Back to Account
+      </button>
+
+      <div class="header-row">
+        <div class="header-title">
+          <p class="eyebrow">ACCOUNT WORKSPACE</p>
+          <h1>Shared Activity</h1>
+          <p class="header-description">
+            Record one activity across multiple cases.
+          </p>
+        </div>
+
+        <div class="timer-status" [class.timer-status-running]="isActivityRunning">
+          <span class="status-indicator"></span>
+          {{ isActivityRunning ? 'Timer running' : 'Timer stopped' }}
+        </div>
+      </div>
+    </header>
+
+    <!-- Activity Panel -->
+    <section class="panel activity-panel">
+      <div class="activity-controls">
+        <span class="control-label">Activity Timer</span>
+
+        <div class="timer-display">
+          {{ formatDuration(activityElapsedSeconds()) }}
+        </div>
+
+        <div
+          class="timer-state"
+          [class.timer-state-running]="isActivityRunning"
+        >
+          <span class="status-indicator"></span>
+          {{ isActivityRunning ? 'Activity in progress' :
+            activityStartedAt ? 'Activity paused' : 'Ready to start' }}
+        </div>
+
+        @if (!activityStartedAt) {
+          <button
+            type="button"
+            class="button button-start"
+            (click)="startActivity()"
+            [disabled]="isSaving || (isSharedMode && selectedCases().length === 0)"
+          >
+            <span class="button-icon">▶</span>
+            Start Activity
+          </button>
+        } @else if (isActivityRunning) {
+          <button
+            type="button"
+            class="button button-stop"
+            (click)="stopActivityTimer()"
+            [disabled]="isSaving"
+          >
+            <span class="button-icon">■</span>
+            Stop Activity
+          </button>
+        } @else {
+          <button
+            type="button"
+            class="button button-resume"
+            (click)="resumeActivity()"
+            [disabled]="isSaving"
+          >
+            <span class="button-icon">▶</span>
+            Resume Activity
+          </button>
+        }
+      </div>
+
+      <div class="activity-note-section">
+        <label for="activityNote">Activity Notes</label>
+
+        <textarea
+          id="activityNote"
+          name="activityNote"
+          [(ngModel)]="activityNote"
+          placeholder="Start the timer, then describe the work you performed..."
+          [disabled]="!activityStartedAt || isSaving"
+          rows="5"
+        ></textarea>
+
+        <p class="field-hint">
+          Describe the work performed across all selected cases.
+        </p>
+      </div>
+    </section>
+
+    <!-- Feedback -->
+    @if (message) {
+      <div
+        class="message"
+        [class.message-success]="messageType === 'success'"
+        [class.message-error]="messageType === 'error'"
+        role="status"
+      >
+        {{ message }}
+      </div>
+    }
+
+    <!-- Selected Cases -->
+    <section class="panel cases-panel">
+      <div class="panel-heading">
+        <div>
+          <h2>Selected Cases</h2>
+          <p class="muted-text">
+            Choose an ending status for each case.
+          </p>
+        </div>
+
+        <span class="count-badge">
+          {{ selectedCases().length }}
+          {{ selectedCases().length === 1 ? 'case' : 'cases' }}
+        </span>
+      </div>
+
+      <div class="selected-case-list">
+        @for (item of selectedCases(); track item.caseItem.id) {
+          <article class="selected-case-card">
+            <div class="selected-case-info">
+              <span class="case-number">
+                {{ item.caseItem.caseNumber }}
+              </span>
+
+              <p class="case-product">
+                {{ item.caseItem.productType || 'No product type specified' }}
+              </p>
+
+              <div class="status-transition">
+                <span class="status-pill status-current">
+                  {{ item.caseItem.status }}
+                </span>
+
+                <span class="transition-arrow">→</span>
+
+                <span class="status-pill status-next">
+                  {{ item.endingStatus }}
+                </span>
+              </div>
+            </div>
+
+            <div class="form-field status-field">
+              <label [for]="'endingStatus-' + item.caseItem.id">
+                Ending Status
+              </label>
+
+              <select
+                [id]="'endingStatus-' + item.caseItem.id"
+                [name]="'endingStatus-' + item.caseItem.id"
+                [(ngModel)]="item.endingStatus"
+                [disabled]="isActivityRunning || isSaving"
+              >
+                @for (status of statuses; track status) {
+                  <option [value]="status">{{ status }}</option>
+                }
+              </select>
+            </div>
+          </article>
+        }
+      </div>
+
+      <div class="info-banner">
+        <span class="info-icon">i</span>
+        <p>
+          This will save one activity entry for all
+          <strong>{{ selectedCases().length }} selected cases</strong>
+          and update their statuses.
+        </p>
+      </div>
+
+      <div class="save-actions">
+        <button
+          type="button"
+          class="button button-secondary"
+          (click)="goBack()"
+          [disabled]="isSaving"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="button"
+          class="button button-save"
+          (click)="saveSharedActivity()"
+          [disabled]="isActivityRunning || isSaving || !activityNote.trim() || activityStartedAt === null"
+        >
+          {{ isSaving ? 'Saving Activity...' : 'Save Shared Activity' }}
+        </button>
+      </div>
+    </section>
+
+    <!-- Start Activity Prompt -->
+    @if (showStartPrompt) {
+      <div
+        class="start-prompt-overlay"
+        (click)="dismissStartPrompt()"
+      >
+        <section
+          class="start-prompt-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="start-prompt-title"
+          aria-describedby="start-prompt-description"
+          (click)="$event.stopPropagation()"
+        >
+          <div class="start-prompt-icon" aria-hidden="true">
+            <span>▶</span>
+          </div>
+
+          <h2 id="start-prompt-title">Ready to start your activity?</h2>
+          <p id="start-prompt-description">
+            Start the timer now so your work time is recorded accurately.
+          </p>
+
+          <div class="start-prompt-actions">
+            <button
+              type="button"
+              class="button button-secondary"
+              (click)="dismissStartPrompt()"
+            >
+              Not Now
+            </button>
+
+            <button
+              type="button"
+              class="button button-start"
+              (click)="startActivityFromPrompt()"
+              [disabled]="isSaving || (isSharedMode && selectedCases().length === 0)"
+            >
+              <span class="button-icon">▶</span>
+              Start Activity
+            </button>
+          </div>
+        </section>
+      </div>
+    }
+  }
+</div>

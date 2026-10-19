@@ -1,382 +1,496 @@
 
-<div class="min-h-screen bg-gray-50 p-6">
+<div class="account-workspace">
   @if (account(); as account) {
-    <!-- Header -->
-    <div class="mb-6">
-      <button
-        type="button"
-        class="mb-4 text-sm font-medium text-blue-600 hover:text-blue-800"
-        (click)="goBack()"
-      >
-        ← Back to Accounts
-      </button>
+    <header class="workspace-header">
+      <div class="header-main">
+        <button
+          type="button"
+          class="back-button"
+          (click)="goBack()">
+          <span aria-hidden="true">←</span>
+          Back to Accounts
+        </button>
 
-      <div class="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 class="text-2xl font-bold text-gray-900">
-            {{ account.accountName }}
-          </h1>
+        <h1>{{ account.accountName }}</h1>
 
-          <p class="mt-1 text-sm text-gray-500">
-            {{ account.cases.length }}
-            {{ account.cases.length === 1 ? 'case' : 'cases' }}
-            · {{ account.clientTimezone || 'Timezone not set' }}
-          </p>
-        </div>
-
-        @if (!editing()) {
-          <button
-            type="button"
-            class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-            (click)="startEditing()"
-          >
-            Edit Account
-          </button>
-        }
+        <p class="account-meta">
+          {{ account.cases.length }}
+          {{ account.cases.length === 1 ? 'case' : 'cases' }}
+          <span class="meta-separator">·</span>
+          {{ account.clientTimezone || 'Timezone not set' }}
+        </p>
       </div>
-    </div>
 
-    <!-- Success Message -->
+      @if (!editing()) {
+        <button
+          type="button"
+          class="button button-primary edit-account-button"
+          (click)="startEditing()">
+          Edit Account
+        </button>
+      }
+    </header>
+
     @if (successMessage()) {
-      <div class="mb-6 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700">
+      <div class="feedback-message feedback-success" role="status">
+        <span aria-hidden="true">✓</span>
         {{ successMessage() }}
       </div>
     }
 
-    <!-- Error Message -->
     @if (errorMessage() && !editing()) {
-      <div class="mb-6 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+      <div class="feedback-message feedback-error" role="alert">
         {{ errorMessage() }}
       </div>
     }
 
-    <!-- Edit Account Form -->
     @if (editing()) {
-      <form
-        class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
-        (ngSubmit)="saveAccount()"
-      >
-        <div class="mb-6">
-          <h2 class="text-lg font-bold text-gray-900">
-            Edit Account Details
-          </h2>
-          <p class="mt-1 text-sm text-gray-500">
-            Update the account, client, sales rep, and notes.
-          </p>
+      <form class="edit-panel" (ngSubmit)="saveAccount()">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">ACCOUNT SETTINGS</p>
+            <h2>Edit Account Details</h2>
+            <p class="panel-description">
+              Update account and contact information.
+            </p>
+          </div>
         </div>
 
         @if (errorMessage()) {
-          <div class="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+          <div class="feedback-message feedback-error" role="alert">
             {{ errorMessage() }}
           </div>
         }
 
-        <div class="grid gap-6 md:grid-cols-2">
-          <!-- Account -->
-          <div>
-            <h3 class="mb-4 font-semibold text-gray-900">Account</h3>
+        <div class="edit-grid">
+          <section class="edit-section">
+            <h3>Account</h3>
 
-            <label
-              for="accountName"
-              class="mb-1 block text-sm text-gray-600"
-            >
-              Account Name *
-            </label>
+            <label for="accountName">Account Name *</label>
             <input
               id="accountName"
               name="accountName"
               type="text"
               [(ngModel)]="editForm.accountName"
-              required
-              class="mb-4 w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-            />
+              required />
 
-            <label
-              for="clientTimezone"
-              class="mb-1 block text-sm text-gray-600"
-            >
-              Client Timezone
-            </label>
+            <label for="clientTimezone">Client Timezone</label>
             <input
               id="clientTimezone"
               name="clientTimezone"
               type="text"
               [(ngModel)]="editForm.clientTimezone"
-              placeholder="e.g. America/New_York"
-              class="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-            />
-          </div>
+              placeholder="e.g. Pacific" />
+          </section>
 
-          <!-- Client -->
-          <div>
-            <h3 class="mb-4 font-semibold text-gray-900">Client</h3>
+          <section class="edit-section">
+            <h3>Client</h3>
 
-            <label
-              for="clientName"
-              class="mb-1 block text-sm text-gray-600"
-            >
-              Name
-            </label>
+            <label for="clientName">Name</label>
             <input
               id="clientName"
               name="clientName"
               type="text"
-              [(ngModel)]="editForm.clientName"
-              class="mb-3 w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-            />
+              [(ngModel)]="editForm.clientName" />
 
-            <label
-              for="clientEmail"
-              class="mb-1 block text-sm text-gray-600"
-            >
-              Email
-            </label>
+            <label for="clientEmail">Email</label>
             <input
               id="clientEmail"
               name="clientEmail"
               type="email"
-              [(ngModel)]="editForm.clientEmail"
-              class="mb-3 w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-            />
+              [(ngModel)]="editForm.clientEmail" />
 
-            <label
-              for="clientPhone"
-              class="mb-1 block text-sm text-gray-600"
-            >
-              Phone
-            </label>
+            <label for="clientPhone">Phone</label>
             <input
               id="clientPhone"
               name="clientPhone"
               type="text"
-              [(ngModel)]="editForm.clientPhone"
-              class="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-            />
-          </div>
+              [(ngModel)]="editForm.clientPhone" />
+          </section>
 
-          <!-- Sales Rep -->
-          <div>
-            <h3 class="mb-4 font-semibold text-gray-900">Sales Rep</h3>
+          <section class="edit-section">
+            <h3>Sales Rep</h3>
 
-            <label
-              for="salesRepName"
-              class="mb-1 block text-sm text-gray-600"
-            >
-              Name
-            </label>
+            <label for="salesRepName">Name</label>
             <input
               id="salesRepName"
               name="salesRepName"
               type="text"
-              [(ngModel)]="editForm.salesRepName"
-              class="mb-3 w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-            />
+              [(ngModel)]="editForm.salesRepName" />
 
-            <label
-              for="salesRepEmail"
-              class="mb-1 block text-sm text-gray-600"
-            >
-              Email
-            </label>
+            <label for="salesRepEmail">Email</label>
             <input
               id="salesRepEmail"
               name="salesRepEmail"
               type="email"
-              [(ngModel)]="editForm.salesRepEmail"
-              class="mb-3 w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-            />
+              [(ngModel)]="editForm.salesRepEmail" />
 
-            <label
-              for="salesRepPhone"
-              class="mb-1 block text-sm text-gray-600"
-            >
-              Phone
-            </label>
+            <label for="salesRepPhone">Phone</label>
             <input
               id="salesRepPhone"
               name="salesRepPhone"
               type="text"
-              [(ngModel)]="editForm.salesRepPhone"
-              class="w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-            />
-          </div>
-          
+              [(ngModel)]="editForm.salesRepPhone" />
+          </section>
         </div>
 
-        <!-- Form Actions -->
-        <div class="mt-6 flex justify-end gap-3 border-t border-gray-200 pt-4">
+        <div class="form-actions">
           <button
             type="button"
-            class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+            class="button button-secondary"
             (click)="cancelEditing()"
-            [disabled]="saving()"
-          >
+            [disabled]="saving()">
             Cancel
           </button>
 
           <button
             type="submit"
-            class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-            [disabled]="saving() || !editForm.accountName.trim()"
-          >
+            class="button button-primary"
+            [disabled]="saving() || !editForm.accountName.trim()">
             {{ saving() ? 'Saving...' : 'Save Changes' }}
           </button>
         </div>
       </form>
     } @else {
-      <!-- Account Information -->
-      <div class="grid gap-6 lg:grid-cols-3">
-        <!-- Client -->
-        <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-          <h2 class="text-sm font-semibold text-gray-900">Client</h2>
-
-          <div class="mt-4 space-y-2 text-sm">
-            <p>
-              <span class="text-gray-500">Name:</span>
-              <span class="ml-2 font-medium text-gray-900">
-                {{ account.clientName || '—' }}
-              </span>
-            </p>
-
-            <p>
-              <span class="text-gray-500">Email:</span>
-              <span class="ml-2 text-gray-700">
-                {{ account.clientEmail || '—' }}
-              </span>
-            </p>
-
-            <p>
-              <span class="text-gray-500">Phone:</span>
-              <span class="ml-2 text-gray-700">
-                {{ account.clientPhone || '—' }}
-              </span>
-            </p>
-
-            <p>
-              <span class="text-gray-500">Timezone:</span>
-              <span class="ml-2 text-gray-700">
-                {{ account.clientTimezone || '—' }}
-              </span>
-            </p>
+      <section class="contact-grid" aria-label="Account contact information">
+        <article class="info-panel contact-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">PRIMARY CONTACT</p>
+              <h2>Client</h2>
+            </div>
           </div>
-        </div>
 
-        <!-- Sales Rep -->
-        <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-          <h2 class="text-sm font-semibold text-gray-900">Sales Rep</h2>
-
-          <div class="mt-4 space-y-2 text-sm">
-            <p>
-              <span class="text-gray-500">Name:</span>
-              <span class="ml-2 font-medium text-gray-900">
-                {{ account.salesRepName || '—' }}
-              </span>
-            </p>
-
-            <p>
-              <span class="text-gray-500">Email:</span>
-              <span class="ml-2 text-gray-700">
-                {{ account.salesRepEmail || '—' }}
-              </span>
-            </p>
-
-            <p>
-              <span class="text-gray-500">Phone:</span>
-              <span class="ml-2 text-gray-700">
-                {{ account.salesRepPhone || '—' }}
-              </span>
-            </p>
+          <div class="contact-name">
+            {{ account.clientName || 'Client name not set' }}
           </div>
-        </div>
 
-        <!-- Account Notes -->
-        <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-          <h2 class="text-sm font-semibold text-gray-900">
-            Account Notes
+          <div class="contact-detail">
+            <span class="detail-label">Email</span>
+            <span class="detail-value">{{ account.clientEmail || '—' }}</span>
+
+            @if (account.clientEmail) {
+              <button
+                type="button"
+                class="copy-button"
+                (click)="copyText(account.clientEmail, 'clientEmail')">
+                {{ copiedLabel() === 'clientEmail' ? 'Copied ✓' : 'Copy' }}
+              </button>
+            }
+          </div>
+
+          <div class="contact-detail">
+            <span class="detail-label">Phone</span>
+            <span class="detail-value">{{ account.clientPhone || '—' }}</span>
+
+            @if (account.clientPhone) {
+              <button
+                type="button"
+                class="copy-button"
+                (click)="copyText(account.clientPhone, 'clientPhone')">
+                {{ copiedLabel() === 'clientPhone' ? 'Copied ✓' : 'Copy' }}
+              </button>
+            }
+          </div>
+        </article>
+
+        <article class="info-panel contact-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">ACCOUNT REPRESENTATIVE</p>
+              <h2>Sales Rep</h2>
+            </div>
+          </div>
+
+          <div class="contact-name">
+            {{ account.salesRepName || 'Sales rep not set' }}
+          </div>
+
+          <div class="contact-detail">
+            <span class="detail-label">Email</span>
+            <span class="detail-value">{{ account.salesRepEmail || '—' }}</span>
+
+            @if (account.salesRepEmail) {
+              <button
+                type="button"
+                class="copy-button"
+                (click)="copyText(account.salesRepEmail, 'salesRepEmail')">
+                {{ copiedLabel() === 'salesRepEmail' ? 'Copied ✓' : 'Copy' }}
+              </button>
+            }
+          </div>
+
+          <div class="contact-detail">
+            <span class="detail-label">Phone</span>
+            <span class="detail-value">{{ account.salesRepPhone || '—' }}</span>
+
+            @if (account.salesRepPhone) {
+              <button
+                type="button"
+                class="copy-button"
+                (click)="copyText(account.salesRepPhone, 'salesRepPhone')">
+                {{ copiedLabel() === 'salesRepPhone' ? 'Copied ✓' : 'Copy' }}
+              </button>
+            }
+          </div>
+        </article>
+      </section>
+    }
+
+    <section class="cases-panel">
+      <div class="cases-heading">
+        <div>
+          <p class="eyebrow">WORKLOAD</p>
+          <h2>
+            Cases
+            <span class="count-badge">{{ account.cases.length }}</span>
           </h2>
-
-          <p class="mt-4 whitespace-pre-wrap text-sm text-gray-600">
-            {{ account.notes || 'No account notes.' }}
+          <p class="panel-description">
+            Select multiple cases to log one shared activity.
+            You can also open an individual case workspace.
           </p>
+        </div>
+
+        <button
+          type="button"
+          class="button button-primary"
+          (click)="startAddingCase()"
+          [disabled]="addingCase() || saving()">
+          + Add Case
+        </button>
+      </div>
+
+      
+      
+      
+    @if (account.cases.length > 1) {
+      <div class="case-selection-actions">
+        <div class="selection-summary">
+          <label class="select-all-label">
+            <input
+              type="checkbox"
+              class="select-all-checkbox"
+              [checked]="areAllCasesSelected()"
+              (change)="toggleSelectAllCases($event)"
+              aria-label="Select all cases" />
+
+            <span>Select All Cases</span>
+          </label>
+
+          <span class="selected-count">
+            {{ selectedCaseIds().length }} of {{ account.cases.length }} selected
+          </span>
+        </div>
+
+
+        <div class="selection-buttons">
+          @if (selectedCaseIds().length > 0) {
+            <button
+              type="button"
+              class="button button-secondary"
+              (click)="clearCaseSelection()">
+              Clear Selection
+            </button>
+          }
+
+          <button
+            type="button"
+            class="button button-primary shared-activity-button"
+            (click)="openSharedActivity()"
+            [disabled]="selectedCaseIds().length === 0">
+            Start Shared Activity
+            <span aria-hidden="true">→</span>
+          </button>
         </div>
       </div>
     }
 
-    <!-- Cases -->
-    <div class="mt-6 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-      <div class="mb-4 flex items-center justify-between">
-        <div>
-          <h2 class="text-lg font-bold text-gray-900">Cases</h2>
-          <p class="mt-1 text-sm text-gray-500">
-            Cases associated with this account
-          </p>
-        </div>
 
-        <span class="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
-          {{ account.cases.length }}
-        </span>
-      </div>
 
-      <div class="space-y-3">
-        @for (caseItem of account.cases; track caseItem.id) {
-          <div
-            class="cursor-pointer rounded-lg border border-gray-200 p-4 transition hover:border-blue-300 hover:bg-blue-50"
-            role="button"
-            tabindex="0"
-            (click)="openCase(caseItem)"
-            (keydown.enter)="openCase(caseItem)"
-          >
-            <div class="flex items-start justify-between gap-4">
-              <div>
-                <p class="font-semibold text-gray-900">
-                  {{ caseItem.caseNumber }}
-                </p>
 
-                <p class="mt-1 text-sm text-gray-500">
+      @if (addingCase()) {
+        <form class="add-case-form" (ngSubmit)="saveNewCase()">
+          <div class="add-case-form-heading">
+            <div>
+              <p class="eyebrow">NEW WORK ITEM</p>
+              <h3>Add Case to {{ account.accountName }}</h3>
+            </div>
+          </div>
+
+          @if (errorMessage()) {
+            <div class="feedback-message feedback-error" role="alert">
+              {{ errorMessage() }}
+            </div>
+          }
+
+          <div class="case-form-grid">
+            <div class="case-form-field">
+              <label for="newCaseNumber">Case Number *</label>
+              <input
+                id="newCaseNumber"
+                name="caseNumber"
+                type="text"
+                [(ngModel)]="caseForm.caseNumber"
+                required
+                placeholder="Enter case number" />
+            </div>
+
+            <div class="case-form-field">
+              <label for="newProductType">Product Type</label>
+              <input
+                id="newProductType"
+                name="productType"
+                type="text"
+                [(ngModel)]="caseForm.productType"
+                placeholder="e.g. CP44" />
+            </div>
+
+            <div class="case-form-field">
+              <label for="newOrderDeadline">Order Deadline</label>
+              <input
+                id="newOrderDeadline"
+                name="orderDeadline"
+                type="text"
+                [(ngModel)]="caseForm.orderDeadline"
+                placeholder="Paste order deadline" />
+            </div>
+
+            <div class="case-form-field">
+              <label for="newArtDeadline">Art Deadline</label>
+              <input
+                id="newArtDeadline"
+                name="artDeadline"
+                type="text"
+                [(ngModel)]="caseForm.artDeadline"
+                placeholder="Paste art deadline" />
+            </div>
+
+            <div class="case-form-field">
+              <label for="newMailDate">Mail Date</label>
+              <input
+                id="newMailDate"
+                name="mailDate"
+                type="text"
+                [(ngModel)]="caseForm.mailDate"
+                placeholder="Paste mail date" />
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button
+              type="button"
+              class="button button-secondary"
+              (click)="cancelAddingCase()"
+              [disabled]="saving()">
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              class="button button-primary"
+              [disabled]="saving() || !caseForm.caseNumber.trim()">
+              {{ saving() ? 'Saving...' : 'Save Case' }}
+            </button>
+          </div>
+        </form>
+      }
+
+      @if (account.cases.length > 0) {
+        <div class="case-list">
+          @for (caseItem of account.cases; track caseItem.id) {
+            <article class="case-row">
+              @if (account.cases.length > 1) {
+                <input
+                  type="checkbox"
+                  class="case-selection-checkbox"
+                  [checked]="isCaseSelected(caseItem.id)"
+                  (change)="toggleCaseSelection(caseItem.id)"
+                  [attr.aria-label]="'Select case ' + caseItem.caseNumber" />
+              }
+
+              <div class="case-main">
+                <div class="case-number-line">
+                  <span class="case-number">{{ caseItem.caseNumber }}</span>
+
+                  <button
+                    type="button"
+                    class="copy-button"
+                    (click)="copyText(caseItem.caseNumber, 'case-' + caseItem.id)">
+                    {{ copiedLabel() === 'case-' + caseItem.id
+                      ? 'Copied ✓'
+                      : 'Copy number' }}
+                  </button>
+                </div>
+
+                <p class="case-product">
                   {{ caseItem.productType || 'Product type not set' }}
                 </p>
               </div>
 
-              <span class="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700">
-                {{ caseItem.status }}
-              </span>
-            </div>
-
-            <div class="mt-4 grid gap-3 text-sm sm:grid-cols-3">
-              <div>
-                <p class="text-xs text-gray-500">Order Deadline</p>
-                <p class="mt-1 font-medium text-gray-900">
-                  {{ caseItem.orderDeadline || '—' }}
-                </p>
+              <div class="case-status-column">
+                <span class="field-label">Status</span>
+                <span
+                  class="status-badge"
+                  [attr.data-status]="caseItem.status">
+                  {{ caseItem.status }}
+                </span>
               </div>
 
-              <div>
-                <p class="text-xs text-gray-500">Art Deadline</p>
-                <p class="mt-1 font-medium text-gray-900">
-                  {{ caseItem.artDeadline || '—' }}
-                </p>
+              <div class="case-deadlines">
+                <div class="deadline-item">
+                  <span class="field-label">Order Deadline</span>
+                  <span class="deadline-value">
+                    {{ caseItem.orderDeadline
+                      ? formatDeadline(caseItem.orderDeadline)
+                      : '—' }}
+                  </span>
+                </div>
+
+                <div class="deadline-item">
+                  <span class="field-label">Art Deadline</span>
+                  <span class="deadline-value">
+                    {{ caseItem.artDeadline
+                      ? formatDeadline(caseItem.artDeadline)
+                      : '—' }}
+                  </span>
+                </div>
+
+                <div class="deadline-item">
+                  <span class="field-label">Mail Date</span>
+                  <span class="deadline-value">
+                    {{ caseItem.mailDate
+                      ? formatDeadline(caseItem.mailDate)
+                      : '—' }}
+                  </span>
+                </div>
               </div>
 
-              <div>
-                <p class="text-xs text-gray-500">Mail Date</p>
-                <p class="mt-1 font-medium text-gray-900">
-                  {{ caseItem.mailDate || '—' }}
-                </p>
+              
+              <div class="case-actions">
+                <button
+                  type="button"
+                  class="button button-primary open-case-button"
+                  (click)="openCase(caseItem)">
+                  Start Activity <span aria-hidden="true">→</span>
+                </button>
               </div>
-            </div>
-          </div>
-        } @empty {
-          <div class="rounded-lg border border-dashed border-gray-300 p-8 text-center">
-            <p class="text-sm text-gray-500">
-              No cases associated with this account.
-            </p>
-          </div>
-        }
-      </div>
-    </div>
+
+
+            </article>
+          }
+        </div>
+      } @else {
+        <div class="empty-state">
+          <div class="empty-state-icon" aria-hidden="true">—</div>
+          <h3>No cases yet</h3>
+          <p>There are no cases associated with this account.</p>
+        </div>
+      }
+    </section>
   } @else {
-    <div class="flex min-h-[400px] items-center justify-center">
-      <p class="text-sm text-gray-500">Loading account...</p>
+    <div class="loading-state">
+      <div class="loading-indicator" aria-hidden="true"></div>
+      <p>Loading account...</p>
     </div>
   }
 </div>

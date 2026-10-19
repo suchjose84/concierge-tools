@@ -1,30 +1,158 @@
 <header class="app-header">
   <div class="header-content">
-    <h1>Concierge Tools</h1>
+    <a
+      class="brand"
+      routerLink="/accounts"
+      aria-label="Concierge Tools home"
+    >
+      <span class="brand-icon" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
+      </span>
+      <span class="brand-name">
+        Concierge <span class="brand-accent">Tools</span>
+      </span>
+    </a>
 
-    <nav class="nav-menu">
-
-      <a
-        routerLink="/accounts"
-        routerLinkActive="active">
-        Accounts
-      </a>
-      <a
-        routerLink="/templates"
-        routerLinkActive="active">
-        Templates
-      </a>
-
-      <a
-        routerLink="/quality"
-        routerLinkActive="active">
-        Quality
-      </a>
-      <a
-        routerLink="/deadline"
-        routerLinkActive="active">
-        Deadline
-      </a>
+    <nav class="nav-menu" aria-label="Main navigation">
+      <a routerLink="/accounts" routerLinkActive="active">Accounts</a>
+      <a routerLink="/templates" routerLinkActive="active">Templates</a>
+      <a routerLink="/quality" routerLinkActive="active">Quality</a>
+      <a routerLink="/deadline" routerLinkActive="active">Deadline</a>
+      <a routerLink="/activity-report" routerLinkActive="active">Activity Report</a>
     </nav>
+
+    <section class="workday-tracker" aria-label="Workday tracker">
+      @if (loading()) {
+        <span class="tracker-loading">Loading timer...</span>
+      } @else {
+        @if (workday(); as currentWorkday) {
+          <div class="tracker-status">
+            <span class="status-dot active"></span>
+            <span>WORKDAY</span>
+          </div>
+
+          <div class="tracker-time">{{ formatTime(elapsedSeconds()) }}</div>
+
+          <div class="tracker-started">
+            Started {{ currentWorkday.startedAt | date:'shortTime':'+0800' }}
+          </div>
+
+          <button
+            type="button"
+            class="huddle-button"
+            [class.huddle-active]="isHuddleActive"
+            [disabled]="busy"
+            (click)="toggleHuddle()"
+            [attr.aria-pressed]="isHuddleActive"
+          >
+            <span class="huddle-indicator"></span>
+            Huddle {{ isHuddleActive ? 'ON' : 'OFF' }}
+            @if (isHuddleActive) {
+              <span class="huddle-time">{{ formatTime(huddleElapsedSeconds()) }}</span>
+            }
+          </button>
+
+          <button
+            type="button"
+            class="end-workday-button"
+            [disabled]="busy"
+            (click)="requestEndWorkday()"
+          >
+            End Day
+          </button>
+        } @else {
+          <div class="tracker-idle">
+            <span class="status-dot"></span>
+            <span>Workday not started</span>
+          </div>
+          <button
+            type="button"
+            class="start-workday-button"
+            [disabled]="busy"
+            (click)="requestStartWorkday()"
+          >
+            Start Workday
+          </button>
+        }
+      }
+    </section>
   </div>
+
+  @if (errorMessage) {
+    <div class="tracker-error" role="alert">
+      {{ errorMessage }}
+      <button type="button" (click)="errorMessage = ''" aria-label="Dismiss error">×</button>
+    </div>
+  }
 </header>
+
+@if (showStartWorkdayModal) {
+  <div class="confirmation-overlay" (click)="cancelStartWorkday()">
+    <section
+      class="confirmation-modal shift-date-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="start-workday-title"
+      aria-describedby="start-workday-description"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="shift-date-icon" aria-hidden="true"><span>📅</span></div>
+      <h2 id="start-workday-title">Start Workday</h2>
+      <p id="start-workday-description">Select the shift date you want to record.</p>
+
+      <div class="shift-date-field">
+        <label for="shift-date">Shift Date</label>
+        <input
+          id="shift-date"
+          type="date"
+          [value]="selectedShiftDate"
+          [disabled]="busy"
+          required
+          (change)="onShiftDateChange($event)"
+        />
+      </div>
+
+      <p class="shift-date-help">
+        This date will be used to group your workday activities in Activity Report,
+        even if your workday continues past midnight.
+      </p>
+
+      <div class="confirmation-actions">
+        <button type="button" class="confirmation-cancel" [disabled]="busy" (click)="cancelStartWorkday()">Cancel</button>
+        <button
+          type="button"
+          class="start-confirm-button"
+          [disabled]="busy || !selectedShiftDate"
+          (click)="confirmStartWorkday()"
+        >
+          {{ busy ? 'Starting...' : 'Start Workday' }}
+        </button>
+      </div>
+    </section>
+  </div>
+}
+
+@if (showEndWorkdayConfirmation) {
+  <div class="confirmation-overlay" (click)="cancelEndWorkday()">
+    <section
+      class="confirmation-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="end-workday-title"
+      aria-describedby="end-workday-description"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="confirmation-icon" aria-hidden="true"><span>!</span></div>
+      <h2 id="end-workday-title">End your workday?</h2>
+      <p id="end-workday-description">
+        Are you sure you want to end your workday? Your active huddle will also be ended.
+      </p>
+      <div class="confirmation-actions">
+        <button type="button" class="confirmation-cancel" [disabled]="busy" (click)="cancelEndWorkday()">Cancel</button>
+        <button type="button" class="confirmation-confirm" [disabled]="busy" (click)="endWorkday()">
+          {{ busy ? 'Ending...' : 'End Workday' }}
+        </button>
+      </div>
+    </section>
+  </div>
+}

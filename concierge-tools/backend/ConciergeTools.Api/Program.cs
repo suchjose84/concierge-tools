@@ -30,11 +30,11 @@ if (string.IsNullOrWhiteSpace(connectionString))
 
 builder.Services.AddSingleton(NpgsqlDataSource.Create(connectionString));
 
-
-
 builder.Services.AddScoped<AccountsService>();
 builder.Services.AddScoped<CasesService>();
 builder.Services.AddScoped<AccountCasesService>();
+builder.Services.AddScoped<AccountActivitiesService>();
+builder.Services.AddScoped<WorkdaysService>();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();

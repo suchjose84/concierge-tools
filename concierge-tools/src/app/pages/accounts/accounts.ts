@@ -1,6 +1,6 @@
 
 import { Component, OnInit, signal, inject } from '@angular/core';
-import { DatePipe } from '@angular/common';
+
 import {
   FormArray,
   FormBuilder,
@@ -15,7 +15,7 @@ import { Account } from '../../models/account.model';
 @Component({
   selector: 'app-accounts',
   standalone: true,
-  imports: [DatePipe, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './accounts.html',
   styleUrl: './accounts.css',
 })
@@ -43,6 +43,9 @@ export class AccountsComponent implements OnInit {
 
     cases: this.fb.array([this.createCaseForm()]),
   });
+
+  statusFilter = 'All Accounts';
+  timezoneFilter = 'All Timezones';
 
   constructor(
     private accountsService: AccountsService,
@@ -404,6 +407,43 @@ getDeadlineLabel(account: Account): string {
         error?.error?.message ?? 'Unable to close account. Please try again.'
       );
     }
+  }
+
+  setStatusFilter(status: string): void {
+    this.statusFilter = status;
+  }
+
+  setTimezoneFilter(timezone: string): void {
+    this.timezoneFilter = timezone;
+  }
+
+  resetFilters(): void {
+    this.statusFilter = 'All Accounts';
+    this.timezoneFilter = 'All Timezones';
+  }
+
+  filteredAccounts() {
+    return this.accounts().filter(account => {
+      const matchesStatus = this.statusFilter === 'All Accounts'
+        || account.cases?.some(caseItem => caseItem.status === this.statusFilter);
+
+      const accountTimezone = (account.clientTimezone ?? '').toLowerCase();
+      const selectedTimezone = this.timezoneFilter.toLowerCase();
+      const matchesTimezone = this.timezoneFilter === 'All Timezones'
+        || accountTimezone.includes(selectedTimezone);
+
+      return matchesStatus && matchesTimezone;
+    });
+  }
+
+  getStatusFilterCount(status: string): number {
+    if (status === 'All Accounts') {
+      return this.accounts().length;
+    }
+
+    return this.accounts().filter(account =>
+      account.cases?.some(caseItem => caseItem.status === status)
+    ).length;
   }
 
   

@@ -1,6 +1,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 using ConciergeTools.Api.Services;
+using ConciergeTools.Api.Models;
 
 namespace ConciergeTools.Api.Controllers;
 
@@ -66,6 +67,44 @@ public class CasesController : ControllerBase
         catch (KeyNotFoundException)
         {
             return NotFound(new { message = "Case not found." });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpPatch("{id:guid}")]
+    public async Task<IActionResult> UpdateCase(
+        Guid id,
+        [FromBody] UpdateCaseRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.CaseNumber))
+        {
+            return BadRequest(new
+            {
+                message = "Case number is required."
+            });
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Status))
+        {
+            return BadRequest(new
+            {
+                message = "Case status is required."
+            });
+        }
+
+        try
+        {
+            var updated = await _casesService.UpdateCaseAsync(id, request);
+
+            if (!updated)
+            {
+                return NotFound(new { message = "Case not found." });
+            }
+
+            return Ok(new { message = "Case updated successfully." });
         }
         catch (ArgumentException ex)
         {

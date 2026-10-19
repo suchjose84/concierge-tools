@@ -1,5 +1,6 @@
 
 using Npgsql;
+using ConciergeTools.Api.Models;
 
 namespace ConciergeTools.Api.Services;
 
@@ -45,21 +46,21 @@ public class CasesService
         return new
         {
             id = reader.GetGuid(0),
-            account_id = reader.GetGuid(1),
-            case_number = reader.GetString(2),
-            product_type = reader.IsDBNull(3)
+            accountId = reader.GetGuid(1),
+            caseNumber = reader.GetString(2),
+            productType = reader.IsDBNull(3)
                 ? null
                 : reader.GetString(3),
             status = reader.GetString(4),
-            order_deadline = reader.IsDBNull(5)
-                ? null
-                : reader.GetValue(5),
-            art_deadline = reader.IsDBNull(6)
-                ? null
-                : reader.GetValue(6),
-            mail_date = reader.IsDBNull(7)
-                ? null
-                : reader.GetValue(7),
+            orderDeadline = reader.IsDBNull(5)
+                ? (DateTimeOffset?)null
+                : reader.GetFieldValue<DateTimeOffset>(5),
+            artDeadline = reader.IsDBNull(6)
+                ? (DateTimeOffset?)null
+                : reader.GetFieldValue<DateTimeOffset>(6),
+            mailDate = reader.IsDBNull(7)
+                ? (DateTimeOffset?)null
+                : reader.GetFieldValue<DateTimeOffset>(7),
             notes = reader.IsDBNull(8)
                 ? null
                 : reader.GetString(8)
@@ -253,4 +254,74 @@ public class CasesService
 
         return activityId;
     }
+
+    public async Task<bool> UpdateCaseAsync(
+        Guid caseId,
+        UpdateCaseRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.CaseNumber))
+        {
+            throw new ArgumentException("Case number is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Status))
+        {
+            throw new ArgumentException("Case status is required.");
+        }
+
+        const string sql = """
+            UPDATE public.cases
+            SET case_number = @caseNumber,
+                product_type = @productType,
+                status = @status,
+                order_deadline = @orderDeadline,
+                art_deadline = @artDeadline,
+                mail_date = @mailDate,
+                notes = @notes,
+                updated_at = now()
+            WHERE id = @caseId
+            RETURNING id;
+            """;
+
+        await using var connection =
+            await _dataSource.OpenConnectionAsync();
+
+        await using var command =
+            new NpgsqlCommand(sql, connection);
+
+        command.Parameters.AddWithValue(
+            "caseId", caseId);
+
+        command.Parameters.AddWithValue(
+            "caseNumber", request.CaseNumber.Trim());
+
+        command.Parameters.AddWithValue(
+            "productType",
+            (object?)request.ProductType ?? DBNull.Value);
+
+        command.Parameters.AddWithValue(
+            "status", request.Status.Trim());
+
+        command.Parameters.AddWithValue(
+            "orderDeadline",
+            (object?)request.OrderDeadline ?? DBNull.Value);
+
+        command.Parameters.AddWithValue(
+            "artDeadline",
+            (object?)request.ArtDeadline ?? DBNull.Value);
+
+        command.Parameters.AddWithValue(
+            "mailDate",
+            (object?)request.MailDate ?? DBNull.Value);
+
+        command.Parameters.AddWithValue(
+            "notes",
+            (object?)request.Notes ?? DBNull.Value);
+
+        var result = await command.ExecuteScalarAsync();
+
+        return result is not null;
+    }
+
+
 }

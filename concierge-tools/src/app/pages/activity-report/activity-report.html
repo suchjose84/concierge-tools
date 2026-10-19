@@ -1,0 +1,150 @@
+<main class="report-page">
+  @if (errorMessage()) {
+    <div class="report-error" role="alert">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <section class="report-overview" aria-label="Activity report overview">
+    <div class="overview-title">
+      <p class="eyebrow">WORKSPACE / REPORTS</p>
+      <h1>Activity Report</h1>
+      <p class="subtitle">
+        Review recorded activities, cases, status changes, and notes.
+      </p>
+    </div>
+
+    <div class="overview-filter">
+      <label for="reportDate">Report Date</label>
+      <div class="date-filter-controls">
+        <input
+          id="reportDate"
+          type="date"
+          [value]="fromDate"
+          [disabled]="loading()"
+          (change)="fromDate = $any($event.target).value; toDate = fromDate"
+        />
+
+        <button
+          type="button"
+          class="primary-button"
+          [disabled]="loading() || !fromDate"
+          (click)="toDate = fromDate; loadReport()"
+        >
+          {{ loading() ? 'Loading...' : 'Apply' }}
+        </button>
+      </div>
+      <span class="filter-hint">View activities recorded for one shift date.</span>
+    </div>
+
+    <article class="summary-card">
+      <span class="summary-icon activity-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <rect x="5" y="3.5" width="14" height="17" rx="1.8"></rect>
+          <path d="M8.5 8h7M8.5 12h7M8.5 16h4"></path>
+        </svg>
+      </span>
+      <div class="summary-copy">
+        <span class="summary-label">Activities</span>
+        <strong>{{ activityCount }}</strong>
+        <span class="summary-hint">Recorded activity instances</span>
+      </div>
+    </article>
+
+    <article class="summary-card duration-summary">
+      <span class="summary-icon duration-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="8.5"></circle>
+          <path d="M12 7v5l3.5 2"></path>
+        </svg>
+      </span>
+      <div class="summary-copy">
+        <span class="summary-label">Recorded Duration</span>
+        <strong>{{ formatDuration(totalDurationSeconds) }}</strong>
+        <span class="summary-hint">Sum of activity durations</span>
+      </div>
+    </article>
+  </section>
+
+  <section class="report-table-section">
+    <div class="table-heading">
+      <div>
+        <h2>Activity Details</h2>
+        <p>One row per activity, including shared-case activities.</p>
+      </div>
+      <span class="table-date">{{ fromDate }}</span>
+    </div>
+
+    <div class="table-scroll">
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>Account Name</th>
+            <th>Case Number(s)</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Duration</th>
+            <th>Ending Status</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (activity of activities(); track activity.id) {
+            <tr>
+              <td class="account-cell">
+                <strong>{{ activity.accountName }}</strong>
+                <span class="activity-type">
+                  {{ activity.activityType }}
+                  @if (activity.contactType) {
+                    · {{ activity.contactType }}
+                  }
+                </span>
+              </td>
+
+              <td class="case-numbers">
+                {{ activity.caseNumbers || '—' }}
+              </td>
+
+              <td class="time-cell">
+                {{ activity.startedAt | date:'MMM d, y, h:mm a':'+0800' }}
+              </td>
+
+              <td class="time-cell">
+                @if (activity.endedAt) {
+                  {{ activity.endedAt | date:'MMM d, y, h:mm a':'+0800' }}
+                } @else {
+                  <span class="status-open">In progress</span>
+                }
+              </td>
+
+              <td class="duration-cell">
+                {{ formatDuration(activity.durationSeconds) }}
+              </td>
+
+              <td class="case-statuses">
+                {{ activity.caseStatuses || '—' }}
+              </td>
+
+              <td class="notes-cell">
+                {{ activity.note || '—' }}
+              </td>
+            </tr>
+          } @empty {
+            @if (!loading()) {
+              <tr>
+                <td colspan="7" class="empty-state">
+                  No activities found for the selected date.
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+
+      @if (loading()) {
+        <div class="table-loading">Loading activities…</div>
+      }
+    </div>
+  </section>
+</main>

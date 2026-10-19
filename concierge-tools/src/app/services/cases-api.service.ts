@@ -48,4 +48,28 @@ export class CasesApiService {
       )
     );
   }
+
+  async updateCase(
+    caseId: string,
+    payload: Case
+  ): Promise<void> {
+    await firstValueFrom(
+      this.http.patch<void>(
+        `${this.apiUrl}/${caseId}`,
+        {
+          caseNumber: payload.caseNumber,
+          productType: payload.productType,
+          status: payload.status,
+          orderDeadline: payload.orderDeadline,
+          artDeadline: payload.artDeadline,
+          mailDate: payload.mailDate,
+          notes: payload.notes
+        }
+      )
+    );
+  }
+
+
+
+
 }
