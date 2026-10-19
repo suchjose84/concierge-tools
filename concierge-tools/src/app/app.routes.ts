@@ -1,4 +1,3 @@
-
 import { Routes } from '@angular/router';
 
 import { EmailTemplateComponent } from './pages/email-template/email-template';
@@ -9,8 +8,36 @@ import { DeadlineTemplateComponent } from './pages/deadline/deadline';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'templates',
+    redirectTo: 'accounts',
     pathMatch: 'full',
+  },
+  {
+    path: 'accounts',
+    loadComponent: () =>
+      import('./pages/accounts/accounts').then(
+        m => m.AccountsComponent
+      ),
+  },
+  {
+    path: 'accounts/:id/shared-activity',
+    loadComponent: () =>
+      import('./pages/activity-workspace/activity-workspace').then(
+        m => m.ActivityWorkspaceComponent
+      ),
+  },
+  {
+    path: 'accounts/:id',
+    loadComponent: () =>
+      import('./pages/account-workspace/account-workspace').then(
+        m => m.AccountWorkspaceComponent
+      ),
+  },
+  {
+    path: 'cases/:id',
+    loadComponent: () =>
+      import('./pages/activity-workspace/activity-workspace').then(
+        m => m.ActivityWorkspaceComponent
+      ),
   },
   {
     path: 'templates',
@@ -29,42 +56,10 @@ export const routes: Routes = [
     component: DeadlineTemplateComponent,
   },
   {
-    path: 'accounts',
-    loadComponent: () =>
-      import('./pages/accounts/accounts').then(
-        m => m.AccountsComponent
-      ),
-  },
-  // {
-  //   path: 'accounts/:id/shared-activity',
-  //   loadComponent: () =>
-  //     import('./pages/shared-activity/shared-activity').then(
-  //       m => m.SharedActivityComponent
-  //     ),
-  // },
-  {
-    path: 'accounts/:id',
-    loadComponent: () =>
-      import('./pages/account-workspace/account-workspace').then(
-        m => m.AccountWorkspaceComponent
-      ),
-  },
-  {
-    path: 'accounts/:id/shared-activity',
-    loadComponent: () =>
-      import('./pages/activity-workspace/activity-workspace')
-        .then(m => m.ActivityWorkspaceComponent)
-  },
-  {
-    path: 'cases/:id',
-    loadComponent: () =>
-      import('./pages/activity-workspace/activity-workspace')
-        .then(m => m.ActivityWorkspaceComponent)
-  },
-  {
     path: 'activity-report',
     loadComponent: () =>
-      import('./pages/activity-report/activity-report')
-        .then(m => m.ActivityReportComponent),
+      import('./pages/activity-report/activity-report').then(
+        m => m.ActivityReportComponent
+      ),
   },
 ];
