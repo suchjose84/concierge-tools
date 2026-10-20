@@ -1,5 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import * as XLSX from 'xlsx';
 import {
   ActivityReportApiService,
   ActivityReportRow
@@ -109,6 +110,73 @@ export class ActivityReportComponent implements OnInit {
   get activityCount(): number {
     return this.accountActivities.length;
   }
+
+
+  
+  private formatManilaDateTime(
+    value: string | Date | null | undefined
+  ): string {
+    if (!value) return '';
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) return '';
+
+    return new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Asia/Manila',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true
+    }).format(date);
+  }
+
+  
+  exportToExcel(): void {
+    const reportRows = this.activities().map(activity => ({
+      'Case Number': activity.caseNumbers || '',
+      'Start Time': this.formatManilaDateTime(activity.startedAt),
+      'End Time': activity.endedAt
+        ? this.formatManilaDateTime(activity.endedAt)
+        : 'In progress',
+      'Ending Status': (activity.caseStatuses || '')
+        .replace(/\b\d+\s*[—–\-:]\s*/g, '')
+        .trim(),
+      'Notes': activity.note || ''
+    }));
+
+    if (reportRows.length === 0) {
+      return;
+    }
+
+    const worksheet = XLSX.utils.json_to_sheet(reportRows);
+
+    worksheet['!cols'] = [
+      { wch: 24 },
+      { wch: 24 },
+      { wch: 24 },
+      { wch: 30 },
+      { wch: 60 }
+    ];
+
+    const workbook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      worksheet,
+      'Activity Report'
+    );
+
+    XLSX.writeFile(
+      workbook,
+      `activity-report-${this.fromDate}.xlsx`
+    );
+  }
+
+
 
 
 }

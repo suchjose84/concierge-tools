@@ -66,14 +66,23 @@
     </article>
   </section>
 
-  <section class="report-table-section">
+  <section class="report-table-section">    
     <div class="table-heading">
       <div>
         <h2>Activity Details</h2>
         <p>One row per activity, including shared-case activities.</p>
       </div>
-      <span class="table-date">{{ fromDate }}</span>
+
+      <button
+        type="button"
+        class="export-button"
+        [disabled]="loading() || activities().length === 0"
+        (click)="exportToExcel()"
+      >
+        Export Excel
+      </button>
     </div>
+
 
     <div class="table-scroll">
       <table class="report-table">

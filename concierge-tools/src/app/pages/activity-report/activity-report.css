@@ -461,3 +461,43 @@
     transition: none;
   }
 }
+
+
+.export-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.4rem;
+  padding: 0.55rem 1rem;
+  border: 1px solid #287a61;
+  border-radius: 0.5rem;
+  background: #174d40;
+  color: #d7fbe9;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 750;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.export-button:hover:not(:disabled) {
+  background: #206b55;
+}
+
+.export-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+@media (max-width: 650px) {
+  .table-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .export-button {
+    width: 100%;
+  }
+}
+
