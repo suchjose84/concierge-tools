@@ -109,45 +109,99 @@ getAccountDeadline(account: Account): Date | null {
   return deadlines[0] ?? null;
 }
 
-getDeadlineLabel(account: Account): string {
-  const nearestCase = account.cases
-    .filter((caseItem) => this.getRelevantDeadline(caseItem) !== null)
-    .sort((a, b) => {
-      return (
-        this.getRelevantDeadline(a)!.getTime() -
-        this.getRelevantDeadline(b)!.getTime()
-      );
-    })[0];
 
-  if (!nearestCase) {
-    return 'No upcoming deadline';
-  }
-
-  const deadline = this.getRelevantDeadline(nearestCase)!;
-    const isPendingRepAction =
-      nearestCase.status?.trim().toLowerCase() === 'pending rep action';
-
-    const daysLeft = Math.ceil(
-      (deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+  private getBusinessDaysDifference(
+    fromDate: Date,
+    toDate: Date
+  ): number {
+    const start = new Date(
+      fromDate.getFullYear(),
+      fromDate.getMonth(),
+      fromDate.getDate()
     );
 
-    if (daysLeft < 0) {
-      const daysOverdue = Math.abs(daysLeft);
-      return `Overdue by ${daysOverdue} day${daysOverdue === 1 ? '' : 's'}`;
+    const end = new Date(
+      toDate.getFullYear(),
+      toDate.getMonth(),
+      toDate.getDate()
+    );
+
+    if (start.getTime() === end.getTime()) {
+      return 0;
     }
 
-    if (daysLeft === 0) {
+    const direction = start < end ? 1 : -1;
+    const cursor = new Date(start);
+    let businessDays = 0;
+
+    while (cursor.getTime() !== end.getTime()) {
+      cursor.setDate(cursor.getDate() + direction);
+
+      const day = cursor.getDay();
+
+      if (day !== 0 && day !== 6) {
+        businessDays += direction;
+      }
+    }
+
+    return businessDays;
+  }
+
+  
+  getDeadlineLabel(account: Account): string {
+    const nearestCase = account.cases
+      .filter(
+        caseItem => this.getRelevantDeadline(caseItem) !== null
+      )
+      .sort((a, b) => {
+        return (
+          this.getRelevantDeadline(a)!.getTime() -
+          this.getRelevantDeadline(b)!.getTime()
+        );
+      })[0];
+
+    if (!nearestCase) {
+      return 'No upcoming deadline';
+    }
+
+    const deadline = this.getRelevantDeadline(nearestCase)!;
+
+    const isPendingRepAction =
+      nearestCase.status?.trim().toLowerCase() ===
+      'pending rep action';
+
+    const now = new Date();
+
+    const businessDaysLeft = this.getBusinessDaysDifference(
+      now,
+      deadline
+    );
+
+    if (businessDaysLeft < 0) {
+      const daysOverdue = Math.abs(businessDaysLeft);
+
+      return `Overdue by ${daysOverdue} business day${
+        daysOverdue === 1 ? '' : 's'
+      }`;
+    }
+
+    if (businessDaysLeft === 0) {
       return isPendingRepAction
         ? 'Order deadline is today'
         : 'Print deadline is today';
     }
 
     if (isPendingRepAction) {
-      return `${daysLeft} day${daysLeft === 1 ? '' : 's'} until order deadline`;
+      return `${businessDaysLeft} business day${
+        businessDaysLeft === 1 ? '' : 's'
+      } until order deadline`;
     }
 
-    return `${daysLeft} more day${daysLeft === 1 ? '' : 's'} before print`;
+    return `${businessDaysLeft} more business day${
+      businessDaysLeft === 1 ? '' : 's'
+    } before print`;
   }
+
 
   needsAttention(account: Account): boolean {
     const now = Date.now();
