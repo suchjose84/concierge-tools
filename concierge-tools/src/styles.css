@@ -1,22 +1,52 @@
 @import "tailwindcss";
 
 :root {
-  --bg-app: #0f172a;
-  --bg-panel: #182235;
-  --bg-elevated: #202d42;
+  /* App surfaces */
+  --bg-app: #f4f6fa;
+  --bg-panel: #ffffff;
+  --bg-elevated: #f8fafc;
+  --bg-hover: #f1f5f9;
 
-  --text-primary: #f1f5f9;
-  --text-secondary: #a8b5c7;
+  /* Text */
+  --text-primary: #172033;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
 
-  --accent: #608cff;
-  --border: #334155;
+  /* Brand and borders */
+  --accent: #3568d4;
+  --accent-hover: #2857bb;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
 
-  --alert-danger: #f87171;
-  --alert-warning: #fbbf24;
-  --alert-success: #4ade80;
+  /* Alerts */
+  --alert-danger: #dc2626;
+  --alert-danger-bg: #fef2f2;
+  --alert-danger-border: #fecaca;
+  --alert-warning: #d97706;
+  --alert-success: #16a34a;
+  --alert-success-bg: #f0fdf4;
+  --alert-success-border: #bbf7d0;
+
+  /* Valpak palette */
+  --vp-blue: #0057b8;
+  --vp-blue-dark: #003f87;
+  --vp-blue-light: #eaf2ff;
+  --vp-red: #e31c23;
+  --vp-bg: #f5f7fb;
+  --vp-surface: #ffffff;
+  --vp-border: #dce3ed;
+  --vp-text: #1f2937;
+  --vp-text-muted: #6b7280;
+  --vp-success: #16a34a;
+  --vp-warning: #f59e0b;
+  --vp-danger: #dc2626;
+  --vp-shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.06);
+  --vp-shadow-md: 0 6px 20px rgba(0, 0, 0, 0.08);
+  --vp-radius: 12px;
+  --vp-header-height: 64px;
+  --vp-content-padding: 1rem;
 }
 
-/* Reset */
 html,
 body {
   margin: 0;
@@ -26,55 +56,9 @@ body {
 
 body {
   font-family: Inter, Arial, sans-serif;
+  color: var(--text-primary);
+  background: var(--bg-app);
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p {
-  margin: 0;
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-:root {
-  /* Primary */
-  --vp-blue: #0057b8;
-  --vp-blue-dark: #003f87;
-  --vp-blue-light: #eaf2ff;
-
-  /* Accent */
-  --vp-red: #e31c23;
-
-  /* Neutral */
-  --vp-bg: #f5f7fb;
-  --vp-surface: #ffffff;
-  --vp-border: #dce3ed;
-
-  /* Text */
-  --vp-text: #1f2937;
-  --vp-text-muted: #6b7280;
-
-  /* Status */
-  --vp-success: #16a34a;
-  --vp-warning: #f59e0b;
-  --vp-danger: #dc2626;
-
-  /* Shadows */
-  --vp-shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.06);
-  --vp-shadow-md: 0 6px 20px rgba(0, 0, 0, 0.08);
-
-  /* Radius */
-  --vp-radius: 12px;
-
-  /* Layout */
-  --vp-header-height: 64px;
-  --vp-content-padding: 1rem;
-}
+h1, h2, h3, h4, h5, h6, p { margin: 0; }
+*, *::before, *::after { box-sizing: border-box; }

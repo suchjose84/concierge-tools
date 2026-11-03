@@ -1057,3 +1057,355 @@
   .filter-button span:nth-child(2) { overflow: hidden; text-overflow: ellipsis; }
   .timezone-filter { width: 100%; max-width: none; }
 }
+
+
+
+
+/* Light theme overrides for Accounts */
+:host {
+  background: #f4f6fa;
+  color: #172033;
+}
+
+.accounts-page {
+  background: #f4f6fa;
+  color: #172033;
+}
+
+.accounts-heading h1,
+.account-name,
+.deadline-date,
+.case-number,
+.deadline-case-number {
+  color: #172033;
+}
+
+.accounts-subtitle,
+.panel-description,
+.account-timezone,
+.form-section-help,
+.form-field label,
+.timezone-label,
+.timezone-icon,
+.select-chevron,
+.first-case-label,
+.muted-inline,
+.deadline-type,
+.deadline-countdown,
+.deadline-empty,
+.case-product,
+.case-empty {
+  color: #64748b;
+}
+
+.section-eyebrow,
+.accounts-eyebrow {
+  color: #3568d4;
+}
+
+.filter-button,
+.timezone-filter {
+  color: #334155;
+  background: #ffffff;
+  border-color: #e2e8f0;
+}
+
+.filter-button:hover,
+.button-secondary:hover,
+.button-open:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #172033;
+}
+
+.filter-button.is-active,
+.filter-all.is-active {
+  color: #1d4ed8;
+  background: #eff6ff;
+  border-color: #93c5fd;
+  box-shadow: none;
+}
+
+.filter-count {
+  color: #475569;
+  background: #f1f5f9;
+}
+
+.filter-button.is-active .filter-count {
+  color: #1d4ed8;
+  background: #dbeafe;
+}
+
+.timezone-filter select,
+.timezone-filter select option {
+  color: #172033;
+  background: #ffffff;
+}
+
+.button-primary,
+.create-account-button {
+  color: #ffffff;
+  background: #3568d4;
+  border-color: #3568d4;
+  box-shadow: none;
+}
+
+.button-primary:hover:not(:disabled),
+.create-account-button:hover:not(:disabled) {
+  background: #2857bb;
+  border-color: #2857bb;
+}
+
+.button-secondary,
+.button-open {
+  color: #334155;
+  background: #ffffff;
+  border-color: #dbe2ea;
+}
+
+.button-ghost {
+  color: #475569;
+  border-color: #dbe2ea;
+}
+
+.button-ghost:hover {
+  color: #172033;
+  background: #f1f5f9;
+}
+
+.button-close,
+.button-danger-ghost {
+  color: #64748b;
+  border-color: #dbe2ea;
+}
+
+.button-close:hover,
+.button-danger-ghost:hover {
+  color: #334155;
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.account-form-panel,
+.accounts-table-wrap,
+.case-form-card,
+.overview-card,
+.overview-note {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 4px 16px rgb(15 23 42 / 4%);
+}
+
+.panel-heading,
+.form-actions {
+  border-color: #e2e8f0;
+}
+
+.form-section-title,
+.panel-heading h2,
+.list-heading h2,
+.overview-note strong,
+.case-form-heading h4 {
+  color: #172033;
+}
+
+.accounts-page input,
+.accounts-page select,
+.accounts-page textarea {
+  color: #172033;
+  background: #ffffff;
+  border-color: #cbd5e1;
+}
+
+.accounts-page input::placeholder,
+.accounts-page textarea::placeholder {
+  color: #94a3b8;
+}
+
+.accounts-page select option {
+  color: #172033;
+  background: #ffffff;
+}
+
+.accounts-page .input-readonly {
+  color: #64748b;
+  background: #f8fafc;
+}
+
+.accounts-table thead {
+  background: #f8fafc;
+}
+
+.accounts-table th {
+  color: #64748b;
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.accounts-table td {
+  color: #172033;
+  border-color: #edf0f4;
+}
+
+.accounts-table tbody tr {
+  background: #ffffff;
+}
+
+.accounts-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.account-avatar {
+  color: #3568d4;
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.case-list-cell,
+.case-deadline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  min-width: 0;
+}
+
+.case-list-line {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.55rem;
+  min-width: 0;
+  line-height: 1.35;
+}
+
+.case-number,
+.deadline-case-number {
+  flex: 0 0 auto;
+  font-size: 0.8rem;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+.case-product {
+  font-size: 0.76rem;
+}
+
+.case-status-text {
+  color: #475569;
+  font-size: 0.74rem;
+  font-weight: 650;
+}
+
+.case-deadline-line {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.12rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #edf0f4;
+  line-height: 1.35;
+}
+
+.case-deadline-line:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.deadline-date {
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.deadline-type,
+.deadline-countdown,
+.deadline-empty {
+  font-size: 0.72rem;
+}
+
+.deadline-countdown {
+  font-weight: 600;
+}
+
+.case-empty {
+  font-size: 0.78rem;
+}
+
+.feedback-success {
+  color: #166534;
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.feedback-error {
+  color: #991b1b;
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.accounts-table tbody tr.deadline-row-overdue,
+.accounts-table tbody tr.deadline-row-urgent,
+.accounts-table tbody tr.deadline-row-approaching {
+  background: #ffffff;
+  box-shadow: none;
+}
+
+.accounts-table tbody tr.deadline-row-overdue:hover,
+.accounts-table tbody tr.deadline-row-urgent:hover,
+.accounts-table tbody tr.deadline-row-approaching:hover {
+  background: #f8fafc;
+}
+
+@media (max-width: 700px) {
+  .case-list-line {
+    align-items: flex-start;
+  }
+
+  .case-deadline-line {
+    gap: 0.15rem;
+  }
+}
+
+
+/* Deadline row highlights and case status colors */
+.case-status-text {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+.case-status-text[data-status="working"] { color: #1d4ed8; background: #eff6ff; border-color: #bfdbfe; }
+.case-status-text[data-status="pending rep action"] { color: #a16207; background: #fefce8; border-color: #fde68a; }
+.case-status-text[data-status="proof out"] { color: #7e22ce; background: #faf5ff; border-color: #e9d5ff; }
+.case-status-text[data-status="completed"] { color: #15803d; background: #f0fdf4; border-color: #bbf7d0; }
+
+/* Highlight the whole account row based on its nearest deadline. */
+.accounts-table tbody tr.deadline-row-overdue,
+.accounts-table tbody tr.deadline-row-urgent {
+  background: #fff1f2;
+  box-shadow: inset 4px 0 0 #e11d48;
+}
+.accounts-table tbody tr.deadline-row-approaching {
+  background: #fffbeb;
+  box-shadow: inset 4px 0 0 #d97706;
+}
+.accounts-table tbody tr.deadline-row-overdue:hover,
+.accounts-table tbody tr.deadline-row-urgent:hover { background: #ffe4e6; }
+.accounts-table tbody tr.deadline-row-approaching:hover { background: #fef3c7; }
+
+.accounts-table tbody tr.deadline-row-overdue .deadline-countdown,
+.accounts-table tbody tr.deadline-row-urgent .deadline-countdown { color: #be123c; font-weight: 750; }
+.accounts-table tbody tr.deadline-row-approaching .deadline-countdown { color: #a16207; font-weight: 750; }
+
+@media (max-width: 700px) {
+  .accounts-table tbody tr.deadline-row-overdue,
+  .accounts-table tbody tr.deadline-row-urgent { border-left: 4px solid #e11d48; }
+  .accounts-table tbody tr.deadline-row-approaching { border-left: 4px solid #d97706; }
+}

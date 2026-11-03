@@ -224,14 +224,15 @@
           <tr>
             <th scope="col">Account</th>
             <th scope="col">Active Cases</th>
-            <th scope="col">Nearest Deadline</th>
-            <th scope="col">Pending Action</th>
+            <th scope="col">Case Deadlines</th>
             <th scope="col" class="actions-heading">Actions</th>
           </tr>
         </thead>
         <tbody>
           @for (account of filteredAccounts(); track account.id) {
-            <tr>
+            <tr [class.deadline-row-overdue]="getDeadlineTone(account) === 'overdue'"
+                [class.deadline-row-urgent]="getDeadlineTone(account) === 'urgent'"
+                [class.deadline-row-approaching]="getDeadlineTone(account) === 'approaching'">
               <td data-label="Account">
                 <div class="account-name-cell">
                   <div class="account-avatar" aria-hidden="true">{{ account.accountName.charAt(0) }}</div>
@@ -243,48 +244,35 @@
               </td>
 
               <td data-label="Active Cases">
-                <div class="case-summary-cell">
-                  <div>
-                    <span class="case-count">{{ account.cases.length }}</span>
-                    <span class="muted-inline">{{ account.cases.length === 1 ? 'case' : 'cases' }}</span>
-                  </div>
-                  @if (account.cases.length > 0) {
-                    <div class="first-case-status">
-                      <span class="first-case-label">First case</span>
-                      <span class="case-status-badge">{{ account.cases[0].status }}</span>
+                <div class="case-list-cell">
+                  @for (caseItem of account.cases; track $index) {
+                    <div class="case-list-line">
+                      <strong class="case-number">{{ caseItem.caseNumber }}</strong>
+                      <span class="case-product">{{ caseItem.productType || 'Product not specified' }}</span>
+                      <span class="case-status-text" [attr.data-status]="(caseItem.status || 'status not set').trim().toLowerCase()">{{ caseItem.status || 'Status not set' }}</span>
                     </div>
+                  } @empty {
+                    <span class="case-empty">No cases</span>
                   }
                 </div>
               </td>
 
-              <td data-label="Nearest Deadline">
-                <span
-                  class="deadline-value"
-                  [class.deadline-urgent]="needsAttention(account) || getDeadlineLabel(account).startsWith('Overdue')"
-                  [class.deadline-normal]="!needsAttention(account) && !getDeadlineLabel(account).startsWith('Overdue')">
-                  {{ getDeadlineLabel(account) }}
-                </span>
-              </td>
-
-              <td data-label="Pending Action">
-                @if (needsAttention(account)) {
-                  <div class="attention-indicator attention-urgent">
-                    <span class="status-dot" aria-hidden="true"></span>
-                    <span>
-                      <strong>{{ getPendingRepActionCount(account) }}
-                      {{ getPendingRepActionCount(account) === 1 ? 'case' : 'cases' }}</strong>
-                      <small>Need attention</small>
-                    </span>
-                  </div>
-                } @else {
-                  <div class="attention-indicator attention-clear">
-                    <span class="status-dot" aria-hidden="true"></span>
-                    <span>
-                      <strong>All clear</strong>
-                      <small>No urgent pending action</small>
-                    </span>
-                  </div>
-                }
+              <td data-label="Case Deadlines">
+                <div class="case-deadline-list">
+                  @for (caseItem of account.cases; track $index) {
+                    <div class="case-deadline-line">
+                      @if (getRelevantDeadline(caseItem); as deadline) {
+                        <span class="deadline-date">{{ getCaseDeadlineDateLabel(deadline) }}</span>
+                        <span class="deadline-type">{{ getCaseDeadlineTypeLabel(caseItem) }}</span>
+                        <span class="deadline-countdown">{{ getCaseDeadlineLabel(caseItem) }}</span>
+                      } @else {
+                        <span class="deadline-empty">No deadline</span>
+                      }
+                    </div>
+                  } @empty {
+                    <span class="deadline-empty">No case deadlines</span>
+                  }
+                </div>
               </td>
 
               <td data-label="Actions">
@@ -296,7 +284,7 @@
             </tr>
           } @empty {
             <tr>
-              <td colspan="5" class="empty-state">
+              <td colspan="4" class="empty-state">
                 <div class="empty-state-icon" aria-hidden="true">▤</div>
                 <strong>No matching accounts</strong>
                 <span>Try another status or timezone filter.</span>
