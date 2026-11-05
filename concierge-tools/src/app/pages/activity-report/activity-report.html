@@ -66,6 +66,29 @@
     </article>
   </section>
 
+  <nav class="report-tabs" aria-label="Report sections">
+    <button
+      type="button"
+      class="report-tab"
+      [class.active]="activeTab() === 'activities'"
+      [attr.aria-selected]="activeTab() === 'activities'"
+      (click)="activeTab.set('activities')"
+    >
+      Activity Details
+    </button>
+
+    <button
+      type="button"
+      class="report-tab"
+      [class.active]="activeTab() === 'completed'"
+      [attr.aria-selected]="activeTab() === 'completed'"
+      (click)="activeTab.set('completed')"
+    >
+      Completed Cases
+    </button>
+  </nav>
+
+  @if (activeTab() === 'activities') {
   <section class="report-table-section">    
     <div class="table-heading">
       <div>
@@ -156,4 +179,9 @@
       }
     </div>
   </section>
+}
+
+@if (activeTab() === 'completed') {
+  <app-completed-cases />
+}
 </main>

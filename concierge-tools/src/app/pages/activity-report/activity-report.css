@@ -501,3 +501,32 @@
   }
 }
 
+.report-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--vp-border, #dce3ed);
+  margin-bottom: 20px;
+}
+
+.report-tab {
+  padding: 12px 18px;
+  border: none;
+  border-bottom: 3px solid transparent;
+  background: transparent;
+  color: var(--vp-text-muted, #6b7280);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: -1px;
+}
+
+.report-tab:hover {
+  color: var(--vp-blue, #0057b8);
+}
+
+.report-tab.active {
+  color: var(--vp-blue, #0057b8);
+  border-bottom-color: var(--vp-blue, #0057b8);
+}
+

@@ -17,6 +17,13 @@ export interface ActivityReportRow {
   eventType: string;
 }
 
+export interface CompletedCaseReportRow {
+  id: string;
+  caseNumber: string;
+  accountName: string;
+  completedAt: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ActivityReportApiService {
   private readonly apiUrl =
@@ -34,4 +41,17 @@ export class ActivityReportApiService {
       })
     );
   }
+
+  getRecentCompletedCases(): Promise<CompletedCaseReportRow[]> {
+    return firstValueFrom(
+      this.http.get<CompletedCaseReportRow[]>(
+        `${this.apiUrl}/completed-cases`
+      )
+    );
+  }
+
+
+
+
+
 }

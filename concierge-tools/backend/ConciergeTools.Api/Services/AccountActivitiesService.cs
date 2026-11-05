@@ -325,6 +325,63 @@ public class AccountActivitiesService
 
         return results;
     }
+
+    public async Task<List<CompletedCaseReportRow>>
+        GetRecentCompletedCasesAsync()
+    {
+        var results = new List<CompletedCaseReportRow>();
+
+        await using var connection =
+            await _dataSource.OpenConnectionAsync();
+
+        await using var command = new NpgsqlCommand(
+            """
+            SELECT DISTINCT ON (c.id)
+                c.id,
+                c.case_number,
+                a.account_name,
+                aa.ended_at
+            FROM public.account_activity_cases aac
+            JOIN public.account_activities aa
+                ON aa.id = aac.account_activity_id
+            JOIN public.cases c
+                ON c.id = aac.case_id
+            JOIN public.accounts a
+                ON a.id = c.account_id
+            WHERE LOWER(TRIM(aac.ending_status)) = 'completed'
+            AND aa.ended_at IS NOT NULL
+            ORDER BY c.id, aa.ended_at DESC
+            LIMIT 10;
+            """,
+            connection);
+
+        await using var reader = await command.ExecuteReaderAsync();
+
+        while (await reader.ReadAsync())
+        {
+            results.Add(new CompletedCaseReportRow(
+                reader.GetGuid(0),
+                reader.GetString(1),
+                reader.GetString(2),
+                reader.GetFieldValue<DateTimeOffset>(3)
+            ));
+        }
+
+        return results
+            .OrderByDescending(c => c.CompletedAt)
+            .ToList();
+    }
+
+    public record CompletedCaseReportRow(
+        Guid Id,
+        string CaseNumber,
+        string AccountName,
+        DateTimeOffset CompletedAt
+    );
+
+
+
+
 }
 
 public record SaveSharedAccountActivityRequest(
@@ -352,6 +409,10 @@ public record ActivityReportRow(
     string CaseNumbers,
     string CaseStatuses
 )
+
+
 {
     public string EventType { get; init; } = "Work";
 }
+
+

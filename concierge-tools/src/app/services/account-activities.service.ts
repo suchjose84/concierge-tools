@@ -23,6 +23,13 @@ export interface SaveSharedActivityResponse {
   activityId: string;
 }
 
+export interface CompletedCaseReportRow {
+  id: string;
+  caseNumber: string;
+  accountName: string;
+  completedAt: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -43,4 +50,23 @@ export class AccountActivitiesService {
       )
     );
   }
+
+  getRecentCompletedCases(): Promise<CompletedCaseReportRow[]> {
+    return firstValueFrom(
+      this.http.get<CompletedCaseReportRow[]>(
+        `${this.apiUrl}/completed-cases`
+      )
+    );
+  }
+
+
+
+
+
+
+
+
+
 }
+
+

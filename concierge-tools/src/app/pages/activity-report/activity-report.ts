@@ -5,11 +5,12 @@ import {
   ActivityReportApiService,
   ActivityReportRow
 } from '../../services/activity-report-api.service';
+import { CompletedCases } from '../completed-cases/completed-cases';
 
 @Component({
   selector: 'app-activity-report',
   standalone: true,
-  imports: [DatePipe],
+  imports: [DatePipe, CompletedCases],
   templateUrl: './activity-report.html',
   styleUrl: './activity-report.css'
 })
@@ -17,6 +18,7 @@ export class ActivityReportComponent implements OnInit {
   activities = signal<ActivityReportRow[]>([]);
   loading = signal(false);
   errorMessage = signal('');
+  activeTab = signal<'activities' | 'completed'>('activities');
 
   fromDate = '';
   toDate = '';

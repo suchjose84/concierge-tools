@@ -1,0 +1,78 @@
+<section class="completed-cases">
+  <div class="section-heading">
+    <div>
+      <h2>Recent Completed Cases</h2>
+      <p>The 10 most recently completed cases across all dates.</p>
+    </div>
+
+    <button
+      type="button"
+      class="refresh-button"
+      [disabled]="loading()"
+      (click)="loadCompletedCases()"
+    >
+      {{ loading() ? 'Loading...' : 'Refresh' }}
+    </button>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="error-message" role="alert">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <div class="table-scroll">
+    <table class="completed-table">
+      <thead>
+        <tr>
+          <th>Case Number</th>
+          <th>Account Name</th>
+          <th>Completion Date</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        @for (caseItem of cases(); track caseItem.id) {
+          <tr>
+            <td class="case-number">
+              {{ caseItem.caseNumber }}
+            </td>
+
+            <td>
+              {{ caseItem.accountName }}
+            </td>
+
+            <td class="date-cell">
+              {{ caseItem.completedAt | date:'MMM d, y, h:mm a':'+0800' }}
+            </td>
+
+            <td>
+              <span class="completed-badge">
+                Completed
+              </span>
+            </td>
+          </tr>
+        } @empty {
+          @if (!loading() && !errorMessage()) {
+            <tr>
+              <td colspan="4" class="empty-state">
+                No completed cases found.
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+
+    @if (loading()) {
+      <div class="loading-state">
+        Loading completed cases...
+      </div>
+    }
+  </div>
+
+  <div class="table-footer">
+    Showing {{ cases().length }} of the latest 10 completed cases
+  </div>
+</section>

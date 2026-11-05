@@ -74,4 +74,10 @@ public class AccountActivitiesController : ControllerBase
             });
         }
     }
+    [HttpGet("/api/activity-report/completed-cases")]
+    public async Task<IActionResult> GetRecentCompletedCases()
+    {
+        var cases = await _service.GetRecentCompletedCasesAsync();
+        return Ok(cases);
+    }
 }
