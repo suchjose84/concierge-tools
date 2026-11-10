@@ -1,0 +1,10 @@
+/workspaces/concierge-tools/concierge-tools/backend/ConciergeTools.Api/bin/Release/net10.0/publish/ConciergeTools.Api
+/workspaces/concierge-tools/concierge-tools/backend/ConciergeTools.Api/bin/Release/net10.0/publish/appsettings.Development.json
+/workspaces/concierge-tools/concierge-tools/backend/ConciergeTools.Api/bin/Release/net10.0/publish/appsettings.json
+/workspaces/concierge-tools/concierge-tools/backend/ConciergeTools.Api/bin/Release/net10.0/publish/ConciergeTools.Api.dll
+/workspaces/concierge-tools/concierge-tools/backend/ConciergeTools.Api/bin/Release/net10.0/publish/ConciergeTools.Api.deps.json
+/workspaces/concierge-tools/concierge-tools/backend/ConciergeTools.Api/bin/Release/net10.0/publish/ConciergeTools.Api.runtimeconfig.json
+/workspaces/concierge-tools/concierge-tools/backend/ConciergeTools.Api/bin/Release/net10.0/publish/ConciergeTools.Api.pdb
+/workspaces/concierge-tools/concierge-tools/backend/ConciergeTools.Api/bin/Release/net10.0/publish/Microsoft.AspNetCore.OpenApi.dll
+/workspaces/concierge-tools/concierge-tools/backend/ConciergeTools.Api/bin/Release/net10.0/publish/Microsoft.OpenApi.dll
+/workspaces/concierge-tools/concierge-tools/backend/ConciergeTools.Api/bin/Release/net10.0/publish/Npgsql.dll
