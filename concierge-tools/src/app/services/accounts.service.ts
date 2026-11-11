@@ -36,6 +36,16 @@ export interface CreateAccountWithCasesResponse {
   caseIds: string[];
 }
 
+export interface UpdateCaseDetails {
+  caseNumber: string;
+  productType: string | null;
+  status: string;
+  orderDeadline: string | null;
+  artDeadline: string | null;
+  mailDate: string | null;
+  notes: string | null;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -82,6 +92,18 @@ export class AccountsService {
     await firstValueFrom(
       this.http.patch<void>(
         `${environment.apiUrl}/api/Accounts/${id}`,
+        payload
+      )
+    );
+  }
+
+  async updateCase(
+    id: string,
+    payload: UpdateCaseDetails
+  ): Promise<void> {
+    await firstValueFrom(
+      this.http.patch<void>(
+        `${environment.apiUrl}/api/Cases/${id}`,
         payload
       )
     );

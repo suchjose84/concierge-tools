@@ -1,6 +1,11 @@
 
 <div class="account-workspace">
   @if (account(); as account) {
+
+    <!-- ==========================================
+         ACCOUNT HEADER
+    =========================================== -->
+
     <header class="workspace-header">
       <div class="header-main">
         <button
@@ -31,6 +36,10 @@
       }
     </header>
 
+    <!-- ==========================================
+         ACCOUNT FEEDBACK
+    =========================================== -->
+
     @if (successMessage()) {
       <div class="feedback-message feedback-success" role="status">
         <span aria-hidden="true">✓</span>
@@ -44,8 +53,13 @@
       </div>
     }
 
+    <!-- ==========================================
+         EDIT ACCOUNT
+    =========================================== -->
+
     @if (editing()) {
       <form class="edit-panel" (ngSubmit)="saveAccount()">
+
         <div class="panel-heading">
           <div>
             <p class="eyebrow">ACCOUNT SETTINGS</p>
@@ -63,6 +77,7 @@
         }
 
         <div class="edit-grid">
+
           <section class="edit-section">
             <h3>Account</h3>
 
@@ -132,6 +147,7 @@
               type="text"
               [(ngModel)]="editForm.salesRepPhone" />
           </section>
+
         </div>
 
         <div class="form-actions">
@@ -151,8 +167,16 @@
           </button>
         </div>
       </form>
+
     } @else {
+
+      <!-- ==========================================
+           ACCOUNT DETAILS
+      =========================================== -->
+
       <section class="contact-grid" aria-label="Account contact information">
+
+        <!-- Client -->
         <article class="info-panel contact-panel">
           <div class="panel-heading">
             <div>
@@ -167,7 +191,9 @@
 
           <div class="contact-detail">
             <span class="detail-label">Email</span>
-            <span class="detail-value">{{ account.clientEmail || '—' }}</span>
+            <span class="detail-value">
+              {{ account.clientEmail || '—' }}
+            </span>
 
             @if (account.clientEmail) {
               <button
@@ -181,7 +207,9 @@
 
           <div class="contact-detail">
             <span class="detail-label">Phone</span>
-            <span class="detail-value">{{ account.clientPhone || '—' }}</span>
+            <span class="detail-value">
+              {{ account.clientPhone || '—' }}
+            </span>
 
             @if (account.clientPhone) {
               <button
@@ -194,6 +222,7 @@
           </div>
         </article>
 
+        <!-- Sales Rep -->
         <article class="info-panel contact-panel">
           <div class="panel-heading">
             <div>
@@ -208,7 +237,9 @@
 
           <div class="contact-detail">
             <span class="detail-label">Email</span>
-            <span class="detail-value">{{ account.salesRepEmail || '—' }}</span>
+            <span class="detail-value">
+              {{ account.salesRepEmail || '—' }}
+            </span>
 
             @if (account.salesRepEmail) {
               <button
@@ -222,7 +253,9 @@
 
           <div class="contact-detail">
             <span class="detail-label">Phone</span>
-            <span class="detail-value">{{ account.salesRepPhone || '—' }}</span>
+            <span class="detail-value">
+              {{ account.salesRepPhone || '—' }}
+            </span>
 
             @if (account.salesRepPhone) {
               <button
@@ -234,20 +267,27 @@
             }
           </div>
         </article>
+
       </section>
     }
 
+    <!-- ==========================================
+         CASES
+    =========================================== -->
+
     <section class="cases-panel">
+
       <div class="cases-heading">
         <div>
           <p class="eyebrow">WORKLOAD</p>
+
           <h2>
             Cases
             <span class="count-badge">{{ account.cases.length }}</span>
           </h2>
+
           <p class="panel-description">
-            Select multiple cases to log one shared activity.
-            You can also open an individual case workspace.
+            Select one or multiple cases to record a shared activity below.
           </p>
         </div>
 
@@ -255,61 +295,53 @@
           type="button"
           class="button button-primary"
           (click)="startAddingCase()"
-          [disabled]="addingCase() || saving()">
+          [disabled]="addingCase() || editingCaseId() !== null || saving() || isActivityRunning || activitySaving">
           + Add Case
         </button>
       </div>
 
-      
-      
-      
-    @if (account.cases.length > 1) {
-      <div class="case-selection-actions">
-        <div class="selection-summary">
-          <label class="select-all-label">
-            <input
-              type="checkbox"
-              class="select-all-checkbox"
-              [checked]="areAllCasesSelected()"
-              (change)="toggleSelectAllCases($event)"
-              aria-label="Select all cases" />
+      <!-- Case Selection -->
+      @if (account.cases.length > 1) {
+        <div class="case-selection-actions">
 
-            <span>Select All Cases</span>
-          </label>
+          <div class="selection-summary">
+            <label class="select-all-label">
+              <input
+                type="checkbox"
+                class="select-all-checkbox"
+                [checked]="areAllCasesSelected()"
+                (change)="toggleSelectAllCases($event)"
+                [disabled]="isActivityRunning || activitySaving"
+                aria-label="Select all cases" />
 
-          <span class="selected-count">
-            {{ selectedCaseIds().length }} of {{ account.cases.length }} selected
-          </span>
+              <span>Select All Cases</span>
+            </label>
+
+            <span class="selected-count">
+              {{ selectedCaseIds().length }} of
+              {{ account.cases.length }} selected
+            </span>
+          </div>
+
+          <div class="selection-buttons">
+            @if (selectedCaseIds().length > 0) {
+              <button
+                type="button"
+                class="button button-secondary"
+                (click)="clearCaseSelection()"
+                [disabled]="isActivityRunning || activitySaving">
+                Clear Selection
+              </button>
+            }
+          </div>
+
         </div>
+      }
 
-
-        <div class="selection-buttons">
-          @if (selectedCaseIds().length > 0) {
-            <button
-              type="button"
-              class="button button-secondary"
-              (click)="clearCaseSelection()">
-              Clear Selection
-            </button>
-          }
-
-          <button
-            type="button"
-            class="button button-primary shared-activity-button"
-            (click)="openSharedActivity()"
-            [disabled]="selectedCaseIds().length === 0">
-            Start Shared Activity
-            <span aria-hidden="true">→</span>
-          </button>
-        </div>
-      </div>
-    }
-
-
-
-
+      <!-- Add Case Form -->
       @if (addingCase()) {
         <form class="add-case-form" (ngSubmit)="saveNewCase()">
+
           <div class="add-case-form-heading">
             <div>
               <p class="eyebrow">NEW WORK ITEM</p>
@@ -324,6 +356,7 @@
           }
 
           <div class="case-form-grid">
+
             <div class="case-form-field">
               <label for="newCaseNumber">Case Number *</label>
               <input
@@ -374,6 +407,7 @@
                 [(ngModel)]="caseForm.mailDate"
                 placeholder="Paste mail date" />
             </div>
+
           </div>
 
           <div class="form-actions">
@@ -392,25 +426,32 @@
               {{ saving() ? 'Saving...' : 'Save Case' }}
             </button>
           </div>
+
         </form>
       }
 
+      <!-- Case List -->
       @if (account.cases.length > 0) {
         <div class="case-list">
+
           @for (caseItem of account.cases; track caseItem.id) {
             <article class="case-row">
+
               @if (account.cases.length > 1) {
                 <input
                   type="checkbox"
                   class="case-selection-checkbox"
                   [checked]="isCaseSelected(caseItem.id)"
                   (change)="toggleCaseSelection(caseItem.id)"
+                  [disabled]="isActivityRunning || activitySaving"
                   [attr.aria-label]="'Select case ' + caseItem.caseNumber" />
               }
 
               <div class="case-main">
                 <div class="case-number-line">
-                  <span class="case-number">{{ caseItem.caseNumber }}</span>
+                  <span class="case-number">
+                    {{ caseItem.caseNumber }}
+                  </span>
 
                   <button
                     type="button"
@@ -429,6 +470,7 @@
 
               <div class="case-status-column">
                 <span class="field-label">Status</span>
+
                 <span
                   class="status-badge"
                   [attr.data-status]="caseItem.status">
@@ -437,11 +479,12 @@
               </div>
 
               <div class="case-deadlines">
+
                 <div class="deadline-item">
                   <span class="field-label">Order Deadline</span>
                   <span class="deadline-value">
                     {{ caseItem.orderDeadline
-                      ? formatDeadline(caseItem.orderDeadline)
+                      ? formatDeadline(caseItem.orderDeadline, true)
                       : '—' }}
                   </span>
                 </div>
@@ -450,7 +493,7 @@
                   <span class="field-label">Art Deadline</span>
                   <span class="deadline-value">
                     {{ caseItem.artDeadline
-                      ? formatDeadline(caseItem.artDeadline)
+                      ? formatDeadline(caseItem.artDeadline, true)
                       : '—' }}
                   </span>
                 </div>
@@ -463,34 +506,441 @@
                       : '—' }}
                   </span>
                 </div>
+
               </div>
 
-              
               <div class="case-actions">
+                <span class="field-label">
+                  {{ isCaseSelected(caseItem.id) ? 'Selected for activity' : 'Not selected' }}
+                </span>
+
                 <button
                   type="button"
-                  class="button button-primary open-case-button"
-                  (click)="openCase(caseItem)">
-                  Start Activity <span aria-hidden="true">→</span>
+                  class="button button-secondary"
+                  (click)="startEditingCase(caseItem)"
+                  [disabled]="isActivityRunning || activitySaving || !!activityStartedAt || caseSaving()">
+                  Edit Case
                 </button>
               </div>
 
-
             </article>
+
+            @if (editingCaseId() === caseItem.id) {
+              <form
+                class="add-case-form"
+                (ngSubmit)="saveEditedCase()">
+
+                <div class="add-case-form-heading">
+                  <div>
+                    <p class="eyebrow">EDIT WORK ITEM</p>
+                    <h3>Edit Case {{ caseItem.caseNumber }}</h3>
+                  </div>
+                </div>
+
+                @if (errorMessage()) {
+                  <div class="feedback-message feedback-error" role="alert">
+                    {{ errorMessage() }}
+                  </div>
+                }
+
+                <div class="case-form-grid">
+
+                  <div class="case-form-field">
+                    <label [for]="'editCaseNumber-' + caseItem.id">Case Number *</label>
+                    <input
+                      [id]="'editCaseNumber-' + caseItem.id"
+                      name="editCaseNumber"
+                      type="text"
+                      [(ngModel)]="caseEditForm.caseNumber"
+                      required />
+                  </div>
+
+                  <div class="case-form-field">
+                    <label [for]="'editProductType-' + caseItem.id">Product Type</label>
+                    <input
+                      [id]="'editProductType-' + caseItem.id"
+                      name="editProductType"
+                      type="text"
+                      [(ngModel)]="caseEditForm.productType" />
+                  </div>
+
+                  <div class="case-form-field">
+                    <label [for]="'editCaseStatus-' + caseItem.id">Status *</label>
+                    <select
+                      [id]="'editCaseStatus-' + caseItem.id"
+                      name="editCaseStatus"
+                      [(ngModel)]="caseEditForm.status"
+                      required>
+                      @for (status of statuses; track status) {
+                        <option [value]="status">{{ status }}</option>
+                      }
+                    </select>
+                  </div>
+
+                  <div class="case-form-field">
+                    <label [for]="'editOrderDeadline-' + caseItem.id">Order Deadline</label>
+                    <input
+                      [id]="'editOrderDeadline-' + caseItem.id"
+                      name="editOrderDeadline"
+                      type="text"
+                      [(ngModel)]="caseEditForm.orderDeadline"
+                      placeholder="M/D/YYYY h:mm AM/PM" />
+                  </div>
+
+                  <div class="case-form-field">
+                    <label [for]="'editArtDeadline-' + caseItem.id">Art Deadline</label>
+                    <input
+                      [id]="'editArtDeadline-' + caseItem.id"
+                      name="editArtDeadline"
+                      type="text"
+                      [(ngModel)]="caseEditForm.artDeadline"
+                      placeholder="M/D/YYYY h:mm AM/PM" />
+                  </div>
+
+                  <div class="case-form-field">
+                    <label [for]="'editMailDate-' + caseItem.id">Mail Date</label>
+                    <input
+                      [id]="'editMailDate-' + caseItem.id"
+                      name="editMailDate"
+                      type="text"
+                      [(ngModel)]="caseEditForm.mailDate"
+                      placeholder="M/D/YYYY" />
+                  </div>
+
+                </div>
+
+                <div class="case-form-field">
+                  <label [for]="'editCaseNotes-' + caseItem.id">Notes</label>
+    
+                </div>
+
+                <div class="form-actions">
+                  <button
+                    type="button"
+                    class="button button-secondary"
+                    (click)="cancelEditingCase()"
+                    [disabled]="caseSaving()">
+                    Cancel
+                  </button>
+
+                  <button
+                    type="submit"
+                    class="button button-primary"
+                    [disabled]="caseSaving() || !caseEditForm.caseNumber.trim()">
+                    {{ caseSaving() ? 'Saving...' : 'Save Changes' }}
+                  </button>
+                </div>
+
+              </form>
+            }
           }
+
         </div>
+
       } @else {
+
         <div class="empty-state">
           <div class="empty-state-icon" aria-hidden="true">—</div>
           <h3>No cases yet</h3>
           <p>There are no cases associated with this account.</p>
         </div>
+
       }
+
     </section>
+
+    <!-- ==========================================
+         CASE ACTIVITY
+    =========================================== -->
+
+    <section class="cases-panel activity-workspace-panel">
+
+      <div class="cases-heading">
+        <div>
+          <p class="eyebrow">WORKSPACE</p>
+          <h2>Case Activity</h2>
+          <p class="panel-description">
+            Record your work across the selected cases.
+          </p>
+        </div>
+
+        <div
+          class="timer-status"
+          [class.timer-status-running]="isActivityRunning">
+          <span class="status-indicator"></span>
+          {{ isActivityRunning ? 'Timer running' : 'Timer stopped' }}
+        </div>
+      </div>
+
+      <!-- Activity Feedback -->
+      @if (message) {
+        <div
+          class="message"
+          [class.message-success]="messageType === 'success'"
+          [class.message-error]="messageType === 'error'"
+          role="status">
+          {{ message }}
+        </div>
+      }
+
+      <!-- Activity Timer and Notes -->
+      <section class="panel activity-panel">
+
+        <div class="activity-controls">
+          <span class="control-label">Activity Timer</span>
+
+          <div class="timer-display">
+            {{ formatDuration(activityElapsedSeconds()) }}
+          </div>
+
+          <div
+            class="timer-state"
+            [class.timer-state-running]="isActivityRunning">
+
+            <span class="status-indicator"></span>
+
+            {{
+              isActivityRunning
+                ? 'Activity in progress'
+                : activityStartedAt
+                  ? 'Activity paused'
+                  : 'Ready to start'
+            }}
+          </div>
+
+          @if (!activityStartedAt) {
+            <button
+              type="button"
+              class="button button-start"
+              (click)="startActivity()"
+              [disabled]="activitySaving || activityCases().length === 0">
+
+              <span class="button-icon">▶</span>
+              Start Activity
+            </button>
+
+          } @else if (isActivityRunning) {
+
+            <button
+              type="button"
+              class="button button-stop"
+              (click)="stopActivityTimer()"
+              [disabled]="activitySaving">
+
+              <span class="button-icon">■</span>
+              Stop Activity
+            </button>
+
+          } @else {
+
+            <button
+              type="button"
+              class="button button-resume"
+              (click)="resumeActivity()"
+              [disabled]="activitySaving">
+
+              <span class="button-icon">▶</span>
+              Resume Activity
+            </button>
+
+          }
+
+        </div>
+
+        <div class="activity-note-section">
+          <label for="activityNote">Activity Notes</label>
+
+          <textarea
+            id="activityNote"
+            name="activityNote"
+            [(ngModel)]="activityNote"
+            placeholder="Start the timer, then describe the work you performed..."
+            [disabled]="!activityStartedAt || activitySaving"
+            rows="5">
+          </textarea>
+
+          <p class="field-hint">
+            Describe the work performed across all selected cases.
+          </p>
+        </div>
+
+      </section>
+
+      <!-- Selected Cases and Ending Status -->
+      <section class="panel activity-cases-panel">
+
+        <div class="panel-heading">
+          <div>
+            <h2>Selected Cases</h2>
+            <p class="muted-text">
+              Choose an ending status for each case.
+            </p>
+          </div>
+
+          <span class="count-badge">
+            {{ activityCases().length }}
+            {{ activityCases().length === 1 ? 'case' : 'cases' }}
+          </span>
+        </div>
+
+        @if (activityCases().length > 0) {
+
+          <div class="selected-case-list">
+
+            @for (item of activityCases(); track item.caseItem.id) {
+
+              <article class="selected-case-card">
+
+                <div class="selected-case-info">
+
+                  <span class="case-number">
+                    {{ item.caseItem.caseNumber }}
+                  </span>
+
+                  <p class="case-product">
+                    {{ item.caseItem.productType || 'No product type specified' }}
+                  </p>
+
+                  <div class="status-transition">
+
+                    <span class="status-pill status-current">
+                      {{ item.caseItem.status }}
+                    </span>
+
+                    <span class="transition-arrow">→</span>
+
+                    <span class="status-pill status-next">
+                      {{ item.endingStatus }}
+                    </span>
+
+                  </div>
+
+                </div>
+
+                <div class="form-field status-field">
+                  <label [for]="'endingStatus-' + item.caseItem.id">
+                    Ending Status
+                  </label>
+
+                  <select
+                    [id]="'endingStatus-' + item.caseItem.id"
+                    [name]="'endingStatus-' + item.caseItem.id"
+                    [(ngModel)]="item.endingStatus"
+                    [disabled]="isActivityRunning || activitySaving">
+
+                    @for (status of statuses; track status) {
+                      <option [value]="status">
+                        {{ status }}
+                      </option>
+                    }
+
+                  </select>
+                </div>
+
+              </article>
+
+            }
+
+          </div>
+
+          <div class="info-banner">
+            <span class="info-icon">i</span>
+
+            <p>
+              This will save one activity entry for all
+              <strong>{{ activityCases().length }} selected cases</strong>
+              and update their statuses.
+            </p>
+          </div>
+
+        } @else {
+
+          <div class="empty-state">
+            <div class="empty-state-icon" aria-hidden="true">—</div>
+            <h3>No cases selected</h3>
+            <p>
+              Select one or more cases from the Cases section above
+              to start recording an activity.
+            </p>
+          </div>
+
+        }
+
+        <!-- Save Actions -->
+        <div class="save-actions">
+          <button
+            type="button"
+            class="button button-secondary button-cancel"
+            (click)="requestDiscardActivity()"
+            [disabled]="activitySaving"
+          >
+            Cancel Activity
+          </button>
+
+          <button
+            type="button"
+            class="button button-save"
+            (click)="saveSharedActivity()"
+            [disabled]="activitySaving"
+          >
+            Save Activity
+          </button>
+        </div>
+
+      </section>
+
+    </section>
+
   } @else {
+
     <div class="loading-state">
       <div class="loading-indicator" aria-hidden="true"></div>
       <p>Loading account...</p>
     </div>
+
   }
+
+  @if (showDiscardConfirmation()) {
+    <div class="confirmation-backdrop">
+      <div
+        class="confirmation-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="discard-title"
+      >
+        <div class="confirmation-icon">!</div>
+
+        <h2 id="discard-title">Discard Activity?</h2>
+
+        <p>
+          You have an unfinished activity. Leaving this page will
+          discard the timer, notes, and activity details.
+        </p>
+
+        <p class="confirmation-warning">
+          This activity has not been saved.
+        </p>
+
+        <div class="confirmation-actions">
+          <button
+            type="button"
+            class="button-keep-working"
+            (click)="keepWorking()"
+          >
+            Keep Working
+          </button>
+
+          <button
+            type="button"
+            class="button-discard"
+            (click)="confirmDiscardActivity()"
+          >
+            Discard Activity
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+
 </div>

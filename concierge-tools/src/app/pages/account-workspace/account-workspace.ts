@@ -1,12 +1,17 @@
 
-import { Component, OnInit, OnDestroy, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, signal } from '@angular/core';
+
+import { CanDeactivateFn } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import {
   AccountsService,
-  NewCaseDetails
+  NewCaseDetails,
+  UpdateCaseDetails
 } from '../../services/accounts.service';
+
+import { AccountActivitiesService } from '../../services/account-activities.service';
 
 import { Account } from '../../models/account.model';
 import { Case } from '../../models/case.model';
@@ -22,6 +27,11 @@ interface UpdateAccountDetails {
   salesRepPhone: string | null;
 }
 
+interface SelectedActivityCase {
+  caseItem: Case;
+  endingStatus: string;
+}
+
 @Component({
   selector: 'app-account-workspace',
   standalone: true,
@@ -30,6 +40,11 @@ interface UpdateAccountDetails {
   styleUrl: './account-workspace.css'
 })
 export class AccountWorkspaceComponent implements OnInit, OnDestroy {
+
+  // --------------------------------------------------
+  // Account state
+  // --------------------------------------------------
+
   account = signal<Account | null>(null);
 
   editing = signal(false);
@@ -41,20 +56,74 @@ export class AccountWorkspaceComponent implements OnInit, OnDestroy {
   addingCase = signal(false);
   caseForm: NewCaseDetails = this.emptyCaseForm();
 
+  editingCaseId = signal<string | null>(null);
+  caseEditForm: UpdateCaseDetails = this.emptyCaseEditForm();
+  caseSaving = signal(false);
   editForm: UpdateAccountDetails = this.emptyForm();
 
   copiedLabel = signal('');
 
-  // Selected cases for the shared Activity Workspace.
+  // --------------------------------------------------
+  // Case selection
+  // --------------------------------------------------
+
   selectedCaseIds = signal<string[]>([]);
+
+  
+
+  // --------------------------------------------------
+  // Activity workspace
+  // --------------------------------------------------
+
+  activityCases = signal<SelectedActivityCase[]>([]);
+  activityElapsedSeconds = signal(0);
+
+  activityNote = '';
+
+  isActivityRunning = false;
+  activitySaving = false;
+
+  activityStartedAt: Date | null = null;
+
+  message = '';
+  messageType: 'success' | 'error' = 'success';
+
+  statuses = [
+    'Proof Out',
+    'Hold',
+    'Working',
+    'Pending Rep Action',
+    'For Approval',
+    'Completed',
+    'Cancelled',
+    'Re-assigned',
+    'Crit Change'
+  ];
+
+  private activityTimer: ReturnType<typeof setInterval> | null = null;
+  private currentRunStartedAt: Date | null = null;
+  private activityEndedAt: Date | null = null;
+  private accumulatedElapsedSeconds = 0;
+
+  showDiscardConfirmation = signal(false);
+  private discardResolver: ((confirmed: boolean) => void) | null = null;
+
+  // --------------------------------------------------
+  // Private properties
+  // --------------------------------------------------
 
   private copyResetTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private accountsService: AccountsService
+    private accountsService: AccountsService,
+    private accountActivitiesService: AccountActivitiesService
   ) {}
+
+  // --------------------------------------------------
+  // Initialization and cleanup
+  // --------------------------------------------------
 
   async ngOnInit(): Promise<void> {
     const accountId = this.route.snapshot.paramMap.get('id');
@@ -78,11 +147,14 @@ export class AccountWorkspaceComponent implements OnInit, OnDestroy {
         this.selectedCaseIds.set(
           foundAccount.cases.map(caseItem => caseItem.id)
         );
+
+        this.syncActivityCases();
       } else {
         this.errorMessage.set(
           'Account not found or no longer active.'
         );
       }
+
     } catch (error) {
       console.error('Error loading account:', error);
       this.errorMessage.set('Unable to load account details.');
@@ -94,6 +166,8 @@ export class AccountWorkspaceComponent implements OnInit, OnDestroy {
       clearTimeout(this.copyResetTimer);
       this.copyResetTimer = null;
     }
+
+    this.clearActivityTimer();
   }
 
   // --------------------------------------------------
@@ -164,12 +238,14 @@ export class AccountWorkspaceComponent implements OnInit, OnDestroy {
 
       this.editing.set(false);
       this.successMessage.set('Account updated successfully.');
+
     } catch (error) {
       console.error('Error updating account:', error);
 
       this.errorMessage.set(
         'Unable to save account changes. Please try again.'
       );
+
     } finally {
       this.saving.set(false);
     }
@@ -198,11 +274,15 @@ export class AccountWorkspaceComponent implements OnInit, OnDestroy {
   // --------------------------------------------------
 
   toggleCaseSelection(caseId: string): void {
+    if (this.isActivityRunning || this.activitySaving) return;
+
     this.selectedCaseIds.update(selected =>
       selected.includes(caseId)
         ? selected.filter(id => id !== caseId)
         : [...selected, caseId]
     );
+
+    this.syncActivityCases();
   }
 
   isCaseSelected(caseId: string): boolean {
@@ -210,12 +290,300 @@ export class AccountWorkspaceComponent implements OnInit, OnDestroy {
   }
 
   clearCaseSelection(): void {
+    if (this.isActivityRunning || this.activitySaving) return;
+
     this.selectedCaseIds.set([]);
+    this.syncActivityCases();
+  }
+
+  areAllCasesSelected(): boolean {
+    const cases = this.account()?.cases ?? [];
+    const selected = this.selectedCaseIds();
+
+    return cases.length > 0 &&
+      cases.every(caseItem => selected.includes(caseItem.id));
+  }
+
+  toggleSelectAllCases(event: Event): void {
+    if (this.isActivityRunning || this.activitySaving) return;
+
+    const checked = (event.target as HTMLInputElement).checked;
+    const account = this.account();
+
+    this.selectedCaseIds.set(
+      checked && account
+        ? account.cases.map(caseItem => caseItem.id)
+        : []
+    );
+
+    this.syncActivityCases();
   }
 
   /**
-   * Opens the same Activity Workspace for one or multiple cases.
+   * Synchronizes the selected cases with the activity workspace.
+   * Existing ending statuses are preserved when selection changes.
    */
+  private syncActivityCases(): void {
+    const account = this.account();
+
+    if (!account) {
+      this.activityCases.set([]);
+      return;
+    }
+
+    const selectedIds = this.selectedCaseIds();
+    const currentActivityCases = this.activityCases();
+
+    this.activityCases.set(
+      account.cases
+        .filter(caseItem => selectedIds.includes(caseItem.id))
+        .map(caseItem => {
+          const existing = currentActivityCases.find(
+            item => item.caseItem.id === caseItem.id
+          );
+
+          return {
+            caseItem,
+            endingStatus: existing?.endingStatus ?? caseItem.status
+          };
+        })
+    );
+  }
+
+  // --------------------------------------------------
+  // Activity timer
+  // --------------------------------------------------
+
+  startActivity(): void {
+    if (
+      this.isActivityRunning ||
+      this.activitySaving ||
+      this.activityCases().length === 0
+    ) {
+      return;
+    }
+
+    this.message = '';
+
+    if (!this.activityStartedAt) {
+      this.activityStartedAt = new Date();
+      this.accumulatedElapsedSeconds = 0;
+      this.activityElapsedSeconds.set(0);
+    }
+
+    this.startTimerInterval();
+  }
+
+  private startTimerInterval(): void {
+    if (this.isActivityRunning) return;
+
+    this.activityEndedAt = null;
+    this.currentRunStartedAt = new Date();
+    this.isActivityRunning = true;
+
+    this.clearActivityTimer();
+
+    this.activityTimer = setInterval(() => {
+      if (!this.currentRunStartedAt) return;
+
+      const currentRunSeconds = Math.floor(
+        (Date.now() - this.currentRunStartedAt.getTime()) / 1000
+      );
+
+      this.activityElapsedSeconds.set(
+        this.accumulatedElapsedSeconds + currentRunSeconds
+      );
+    }, 1000);
+  }
+
+  stopActivityTimer(): void {
+    if (!this.isActivityRunning || !this.currentRunStartedAt) {
+      return;
+    }
+
+    const currentRunSeconds = Math.floor(
+      (Date.now() - this.currentRunStartedAt.getTime()) / 1000
+    );
+
+    this.accumulatedElapsedSeconds += currentRunSeconds;
+
+    this.activityElapsedSeconds.set(
+      this.accumulatedElapsedSeconds
+    );
+
+    this.activityEndedAt = new Date();
+    this.currentRunStartedAt = null;
+    this.isActivityRunning = false;
+
+    this.clearActivityTimer();
+  }
+
+  resumeActivity(): void {
+    if (
+      this.isActivityRunning ||
+      this.activitySaving ||
+      !this.activityStartedAt
+    ) {
+      return;
+    }
+
+    this.startTimerInterval();
+  }
+
+  private clearActivityTimer(): void {
+    if (this.activityTimer) {
+      clearInterval(this.activityTimer);
+      this.activityTimer = null;
+    }
+  }
+
+  // --------------------------------------------------
+  // Activity formatting
+  // --------------------------------------------------
+
+  formatDuration(seconds: number): string {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = seconds % 60;
+
+    const formattedMinutes = minutes.toString().padStart(2, '0');
+    const formattedSeconds = remainingSeconds.toString().padStart(2, '0');
+
+    if (hours > 0) {
+      return `${hours.toString().padStart(2, '0')}:${formattedMinutes}:${formattedSeconds}`;
+    }
+
+    return `${formattedMinutes}:${formattedSeconds}`;
+  }
+
+  // --------------------------------------------------
+  // Save shared activity
+  // --------------------------------------------------
+
+  async saveSharedActivity(): Promise<void> {
+    if (this.isActivityRunning || this.activitySaving) {
+      this.setActivityMessage(
+        'Stop the timer before saving the activity.',
+        'error'
+      );
+      return;
+    }
+
+    const account = this.account();
+    const startedAt = this.activityStartedAt;
+    const endedAt = this.activityEndedAt;
+    const cases = this.activityCases();
+
+    if (!account || !startedAt || !endedAt) {
+      this.setActivityMessage(
+        'Start and stop the activity timer before saving.',
+        'error'
+      );
+      return;
+    }
+
+    if (!this.activityNote.trim()) {
+      this.setActivityMessage(
+        'Please describe what you did.',
+        'error'
+      );
+      return;
+    }
+
+    if (cases.length === 0) {
+      this.setActivityMessage('No cases selected.', 'error');
+      return;
+    }
+
+    if (cases.some(item => !item.endingStatus.trim())) {
+      this.setActivityMessage(
+        'Please select an ending status for every case.',
+        'error'
+      );
+      return;
+    }
+
+    this.activitySaving = true;
+    this.message = '';
+
+    try {
+      await this.accountActivitiesService.saveSharedActivity(
+        account.id,
+        {
+          note: this.activityNote.trim(),
+          startedAt: startedAt.toISOString(),
+          endedAt: endedAt.toISOString(),
+          durationSeconds: this.activityElapsedSeconds(),
+          cases: cases.map(item => ({
+            caseId: item.caseItem.id,
+            endingStatus: item.endingStatus
+          }))
+        }
+      );
+
+      // Refresh account and case statuses after saving.
+      const accounts = await this.accountsService.getAccounts();
+
+      const updatedAccount = accounts.find(
+        item => item.id === account.id
+      );
+
+      if (updatedAccount) {
+        this.account.set(updatedAccount);
+
+        this.selectedCaseIds.set(
+          updatedAccount.cases.map(caseItem => caseItem.id)
+        );
+
+        this.activityCases.set([]);
+        this.syncActivityCases();
+      }
+
+      this.resetActivity();
+
+      this.setActivityMessage(
+        'Activity saved successfully.',
+        'success'
+      );
+
+    } catch (error) {
+      console.error('Error saving activity:', error);
+
+      this.setActivityMessage(
+        'Could not save activity. You can try saving again.',
+        'error'
+      );
+
+    } finally {
+      this.activitySaving = false;
+    }
+  }
+
+  private resetActivity(): void {
+    this.clearActivityTimer();
+
+    this.isActivityRunning = false;
+    this.activityStartedAt = null;
+    this.activityEndedAt = null;
+    this.currentRunStartedAt = null;
+    this.accumulatedElapsedSeconds = 0;
+
+    this.activityElapsedSeconds.set(0);
+    this.activityNote = '';
+  }
+
+  private setActivityMessage(
+    message: string,
+    type: 'success' | 'error'
+  ): void {
+    this.message = message;
+    this.messageType = type;
+  }
+
+  // --------------------------------------------------
+  // Navigation
+  // --------------------------------------------------
+
   openSharedActivity(): void {
     const account = this.account();
     const selectedIds = this.selectedCaseIds();
@@ -234,10 +602,6 @@ export class AccountWorkspaceComponent implements OnInit, OnDestroy {
     );
   }
 
-  /**
-   * Clicking an individual case opens the same Activity Workspace,
-   * with only that case selected.
-   */
   openCase(caseItem: Case): void {
     const account = this.account();
 
@@ -277,6 +641,7 @@ export class AccountWorkspaceComponent implements OnInit, OnDestroy {
         this.copiedLabel.set('');
         this.copyResetTimer = null;
       }, 1500);
+
     } catch (error) {
       console.error('Unable to copy text:', error);
     }
@@ -286,7 +651,7 @@ export class AccountWorkspaceComponent implements OnInit, OnDestroy {
   // Deadline formatting
   // --------------------------------------------------
 
-  formatDeadline(value: string): string {
+  formatDeadline(value: string, includeTime = false): string {
     const datePart = value.slice(0, 10);
     const parts = datePart.split('-');
 
@@ -298,11 +663,25 @@ export class AccountWorkspaceComponent implements OnInit, OnDestroy {
 
     const date = new Date(year, month - 1, day);
 
-    return date.toLocaleDateString(undefined, {
+    const formattedDate = date.toLocaleDateString(undefined, {
       month: 'short',
       day: 'numeric',
       year: 'numeric'
     });
+
+    if (!includeTime) return formattedDate;
+
+    const time = new Date(value);
+
+    if (Number.isNaN(time.getTime())) return formattedDate;
+
+    const formattedTime = time.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    }).replace(':00 ', '').replace(' ', '');
+
+    return `${formattedDate} · ${formattedTime}`;
   }
 
   // --------------------------------------------------
@@ -321,6 +700,8 @@ export class AccountWorkspaceComponent implements OnInit, OnDestroy {
   }
 
   startAddingCase(): void {
+    if (this.isActivityRunning || this.activitySaving) return;
+
     this.caseForm = this.emptyCaseForm();
     this.errorMessage.set('');
     this.successMessage.set('');
@@ -449,14 +830,20 @@ export class AccountWorkspaceComponent implements OnInit, OnDestroy {
       }
 
       this.account.set(updatedAccount);
+
       // Keep all cases selected after adding a new case.
       this.selectedCaseIds.set(
         updatedAccount.cases.map(caseItem => caseItem.id)
       );
+
+      this.activityCases.set([]);
+      this.syncActivityCases();
+
       this.addingCase.set(false);
       this.caseForm = this.emptyCaseForm();
 
       this.successMessage.set('Case added successfully.');
+
     } catch (error: any) {
       console.error('Error adding case:', error);
 
@@ -465,30 +852,242 @@ export class AccountWorkspaceComponent implements OnInit, OnDestroy {
         error?.message ??
         'Unable to add the case. Please try again.'
       );
+
     } finally {
       this.saving.set(false);
     }
   }
 
-  areAllCasesSelected(): boolean {
-    const cases = this.account()?.cases ?? [];
-    const selected = this.selectedCaseIds();
-
-    return cases.length > 0 &&
-      cases.every(caseItem => selected.includes(caseItem.id));
+  private emptyCaseEditForm(): UpdateCaseDetails {
+    return {
+      caseNumber: '',
+      productType: '',
+      status: 'Working',
+      orderDeadline: null,
+      artDeadline: null,
+      mailDate: null,
+      notes: ''
+    };
   }
 
-  toggleSelectAllCases(event: Event): void {
-    const checked = (event.target as HTMLInputElement).checked;
+  private formatCaseDateForEdit(
+    value: string | null | undefined,
+    includeTime: boolean
+  ): string | null {
+    if (!value) return null;
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) return null;
+
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const year = date.getFullYear();
+
+    if (!includeTime) {
+      return `${month}/${day}/${year}`;
+    }
+
+    let hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const period = hours >= 12 ? 'PM' : 'AM';
+
+    hours = hours % 12 || 12;
+
+    return `${month}/${day}/${year} ${hours}:${minutes} ${period}`;
+  }
+
+  startEditingCase(caseItem: Case): void {
+    if (
+      this.isActivityRunning ||
+      this.activitySaving ||
+      this.activityStartedAt ||
+      this.caseSaving()
+    ) {
+      return;
+    }
+
+    this.addingCase.set(false);
+    this.caseForm = this.emptyCaseForm();
+
+    this.editingCaseId.set(caseItem.id);
+
+    this.caseEditForm = {
+      caseNumber: caseItem.caseNumber ?? '',
+      productType: caseItem.productType ?? '',
+      status: caseItem.status ?? 'Working',
+      orderDeadline: this.formatCaseDateForEdit(
+        caseItem.orderDeadline,
+        true
+      ),
+      artDeadline: this.formatCaseDateForEdit(
+        caseItem.artDeadline,
+        true
+      ),
+      mailDate: this.formatCaseDateForEdit(
+        caseItem.mailDate,
+        false
+      ),
+      notes: caseItem.notes ?? ''
+    };
+
+    this.errorMessage.set('');
+    this.successMessage.set('');
+  }
+
+  cancelEditingCase(): void {
+    this.editingCaseId.set(null);
+    this.caseEditForm = this.emptyCaseEditForm();
+    this.errorMessage.set('');
+  }
+
+  async saveEditedCase(): Promise<void> {
     const account = this.account();
+    const caseId = this.editingCaseId();
 
-    this.selectedCaseIds.set(
-      checked && account
-        ? account.cases.map(caseItem => caseItem.id)
-        : []
-    );
+    if (!account || !caseId || this.caseSaving()) return;
+
+    if (!this.caseEditForm.caseNumber.trim()) {
+      this.errorMessage.set('Case number is required.');
+      return;
+    }
+
+    if (!this.caseEditForm.status.trim()) {
+      this.errorMessage.set('Case status is required.');
+      return;
+    }
+
+    this.caseSaving.set(true);
+    this.errorMessage.set('');
+    this.successMessage.set('');
+
+    try {
+      const payload: UpdateCaseDetails = {
+        caseNumber: this.caseEditForm.caseNumber.trim(),
+        productType: this.cleanValue(this.caseEditForm.productType),
+        status: this.caseEditForm.status.trim(),
+        orderDeadline: this.toIsoDate(
+          this.caseEditForm.orderDeadline,
+          true
+        ),
+        artDeadline: this.toIsoDate(
+          this.caseEditForm.artDeadline,
+          true
+        ),
+        mailDate: this.toIsoDate(
+          this.caseEditForm.mailDate,
+          false
+        ),
+        notes: this.cleanValue(this.caseEditForm.notes)
+      };
+
+      await this.accountsService.updateCase(caseId, payload);
+
+      const accounts = await this.accountsService.getAccounts();
+
+      const updatedAccount = accounts.find(
+        item => item.id === account.id
+      );
+
+      if (!updatedAccount) {
+        throw new Error(
+          'The case was updated, but the account could not be refreshed. Please reload the page.'
+        );
+      }
+
+      this.account.set(updatedAccount);
+      this.syncActivityCases();
+
+      this.editingCaseId.set(null);
+      this.caseEditForm = this.emptyCaseEditForm();
+
+      this.successMessage.set('Case updated successfully.');
+    } catch (error: any) {
+      console.error('Error updating case:', error);
+
+      this.errorMessage.set(
+        error?.error?.message ??
+        error?.message ??
+        'Unable to update the case. Please try again.'
+      );
+    } finally {
+      this.caseSaving.set(false);
+    }
   }
 
+  // --------------------------------------------------
+  // Unsaved activity protection
+  // --------------------------------------------------
 
+  hasUnfinishedActivity(): boolean {
+    return this.activityStartedAt !== null &&
+      !this.activitySaving;
+  }
+
+  requestDiscardActivity(): void {
+    if (!this.hasUnfinishedActivity()) {
+      this.resetActivity();
+      return;
+    }
+
+    this.showDiscardConfirmation.set(true);
+  }
+
+  confirmDiscardActivity(): void {
+    this.resetActivity();
+
+    // Restore each case's original status in the activity panel.
+    this.activityCases.update(items =>
+      items.map(item => ({
+        ...item,
+        endingStatus: item.caseItem.status
+      }))
+    );
+
+    this.activityNote = '';
+    this.message = '';
+
+    this.showDiscardConfirmation.set(false);
+
+    const resolver = this.discardResolver;
+    this.discardResolver = null;
+
+    resolver?.(false);
+  }
+
+  keepWorking(): void {
+    this.showDiscardConfirmation.set(false);
+
+    const resolver = this.discardResolver;
+    this.discardResolver = null;
+
+    resolver?.(false);
+  }
+
+  // Used by Angular's CanDeactivate route guard.
+  canDeactivate(): Promise<boolean> {
+    if (!this.hasUnfinishedActivity()) {
+      return Promise.resolve(true);
+    }
+
+    this.showDiscardConfirmation.set(true);
+
+    return new Promise<boolean>(resolve => {
+      this.discardResolver = resolve;
+    });
+  }
+
+  // Native browser warning for refresh, tab close, or leaving the site.
+  @HostListener('window:beforeunload', ['$event'])
+  handleBeforeUnload(event: BeforeUnloadEvent): void {
+    if (!this.hasUnfinishedActivity()) {
+      return;
+    }
+
+    event.preventDefault();
+    event.returnValue = '';
+  }
 
 }
+
+export const pendingActivityGuard: CanDeactivateFn<AccountWorkspaceComponent> = component => component.canDeactivate();

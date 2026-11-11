@@ -4,6 +4,7 @@ import { EmailTemplateComponent } from './pages/email-template/email-template';
 import { QualityComponent } from './pages/quality/quality';
 import { HistoryPageComponent } from './pages/history-page/history-page';
 import { DeadlineTemplateComponent } from './pages/deadline/deadline';
+import { pendingActivityGuard } from './pages/account-workspace/account-workspace';
 
 export const routes: Routes = [
   {
@@ -27,6 +28,7 @@ export const routes: Routes = [
   },
   {
     path: 'accounts/:id',
+    canDeactivate: [pendingActivityGuard],
     loadComponent: () =>
       import('./pages/account-workspace/account-workspace').then(
         m => m.AccountWorkspaceComponent
