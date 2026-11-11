@@ -510,16 +510,14 @@
               </div>
 
               <div class="case-actions">
-                <span class="field-label">
-                  {{ isCaseSelected(caseItem.id) ? 'Selected for activity' : 'Not selected' }}
-                </span>
 
                 <button
                   type="button"
-                  class="button button-secondary"
+                  class="edit-case-button"
                   (click)="startEditingCase(caseItem)"
                   [disabled]="isActivityRunning || activitySaving || !!activityStartedAt || caseSaving()">
-                  Edit Case
+                  <span aria-hidden="true">✎</span>
+                  Edit
                 </button>
               </div>
 

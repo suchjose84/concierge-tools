@@ -4837,5 +4837,38 @@ input:focus-visible {
   }
 }
 
+.edit-case-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 8px 13px;
+  border: 1px solid #dbe4f0;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #315b91;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.edit-case-button:hover:not(:disabled) {
+  background: #eff6ff;
+  border-color: #93b4df;
+  color: #1554a0;
+}
+
+.edit-case-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.edit-case-button span {
+  font-size: 15px;
+  line-height: 1;
+}
+
 
 
