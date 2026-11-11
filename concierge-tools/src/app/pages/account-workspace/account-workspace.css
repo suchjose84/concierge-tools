@@ -1,56 +1,18 @@
 .account-workspace {
 
-   --workspace-bg: var(--bg-primary, #111c2e);
-
-  --panel-bg: var(--bg-card, #19263a);
-
-  --panel-raised: var(--bg-card-hover, #202f46);
-
-  --workspace-border: var(--border-color, #304158);
-
-  --text-main: var(--text-primary, #f1f5f9);
-
-  --text-muted: var(--text-secondary, #a9bad2);
-
-  --accent: var(--accent-primary, #5b8cff);
-
-  --workspace-accent-hover: var(--accent-hover, #4779ed);
-
-
-
-  width: 100%;
-
-  max-width: 1600px;
-
-  margin: 0 auto;
-
-  padding: 28px 34px 44px;
-
-  color: var(--text-main);
-
 }
 
 
 
 :host {
 
-  display: block;
-
-  min-height: 100%;
-
-  color: var(--text-primary, #f1f5f9);
-
 }
 
 .account-workspace {
 
-  min-height: 100vh;
-
   box-sizing: border-box;
 
   background-color: #111c2e;
-
-  color: #f1f5f9;
 
 }
 
@@ -88,51 +50,17 @@ input:focus-visible {
 
 .workspace-header {
 
-  display: flex;
-
-  align-items: flex-end;
-
-  justify-content: space-between;
-
-  gap: 24px;
-
-  margin-bottom: 24px;
-
 }
 
 
 
 .header-main {
 
-  min-width: 0;
-
 }
 
 
 
 .back-button {
-
-  display: inline-flex;
-
-  align-items: center;
-
-  gap: 8px;
-
-  margin: 0 0 14px;
-
-  padding: 0;
-
-  border: 0;
-
-  background: transparent;
-
-  color: var(--accent);
-
-  font-size: 0.9rem;
-
-  font-weight: 600;
-
-  cursor: pointer;
 
   transition: color 160ms ease;
 
@@ -141,8 +69,6 @@ input:focus-visible {
 
 
 .back-button:hover {
-
-  color: #91b2ff;
 
 }
 
@@ -158,19 +84,7 @@ input:focus-visible {
 
 .workspace-header h1 {
 
-  margin: 0;
-
-  color: var(--text-main);
-
-  font-size: clamp(1.6rem, 2.4vw, 2.15rem);
-
-  font-weight: 750;
-
-  line-height: 1.2;
-
   letter-spacing: -0.035em;
-
-  overflow-wrap: anywhere;
 
 }
 
@@ -178,27 +92,13 @@ input:focus-visible {
 
 .account-meta {
 
-  display: flex;
-
   flex-wrap: wrap;
-
-  align-items: center;
-
-  gap: 9px;
-
-  margin: 8px 0 0;
-
-  color: var(--text-muted);
-
-  font-size: 0.9rem;
 
 }
 
 
 
 .meta-separator {
-
-  color: #536780;
 
 }
 
@@ -256,21 +156,11 @@ input:focus-visible {
 
 .button-primary {
 
-  border-color: var(--accent);
-
-  background: var(--accent);
-
-  color: #fff;
-
 }
 
 
 
 .button-primary:hover:not(:disabled) {
-
-  border-color: var(--accent-hover);
-
-  background: var(--accent-hover);
 
 }
 
@@ -278,19 +168,11 @@ input:focus-visible {
 
 .button-secondary {
 
-  border-color: var(--border-color);
-
-  background: var(--panel-raised);
-
-  color: var(--text-main);
-
 }
 
 
 
 .button-secondary:hover:not(:disabled) {
-
-  background: #2a3b54;
 
 }
 
@@ -299,8 +181,6 @@ input:focus-visible {
 .edit-account-button {
 
   min-height: 44px;
-
-  padding: 11px 18px;
 
 }
 
@@ -318,13 +198,7 @@ input:focus-visible {
 
   margin-bottom: 18px;
 
-  padding: 12px 15px;
-
   border: 1px solid var(--border-color);
-
-  border-radius: 10px;
-
-  font-size: 0.875rem;
 
 }
 
@@ -332,23 +206,11 @@ input:focus-visible {
 
 .feedback-success {
 
-  border-color: rgb(52 211 153 / 28%);
-
-  background: rgb(16 185 129 / 10%);
-
-  color: #6ee7b7;
-
 }
 
 
 
 .feedback-error {
-
-  border-color: rgb(248 113 113 / 30%);
-
-  background: rgb(239 68 68 / 10%);
-
-  color: #fca5a5;
 
 }
 
@@ -366,27 +228,11 @@ input:focus-visible {
 
   max-width: 100%;
 
-  border-color: rgb(52 211 153 / 30%);
-
-  background: #16362f;
-
-  color: #86efac;
-
-  box-shadow: 0 8px 24px rgb(0 0 0 / 15%);
-
 }
 
 
 
 .contact-grid {
-
-  display: grid;
-
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-
-  gap: 16px;
-
-  margin-bottom: 24px;
 
 }
 
@@ -414,21 +260,11 @@ input:focus-visible {
 
 .info-panel {
 
-  padding: 20px;
-
 }
 
 
 
 .panel-heading {
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 12px;
-
-  margin-bottom: 18px;
 
 }
 
@@ -436,27 +272,9 @@ input:focus-visible {
 
 .panel-icon {
 
-  display: grid;
-
   flex: 0 0 38px;
 
-  width: 38px;
-
-  height: 38px;
-
-  place-items: center;
-
   border: 1px solid var(--border-color);
-
-  border-radius: 11px;
-
-  background: #22334e;
-
-  color: #8fb0ff;
-
-  font-size: 0.95rem;
-
-  font-weight: 800;
 
 }
 
@@ -464,35 +282,17 @@ input:focus-visible {
 
 .rep-icon {
 
-  background: #21372f;
-
-  color: #6ee7b7;
-
 }
 
 
 
 .notes-icon {
 
-  background: #332d4c;
-
-  color: #c4b5fd;
-
 }
 
 
 
 .eyebrow {
-
-  margin: 0 0 5px;
-
-  color: var(--accent);
-
-  font-size: 0.68rem;
-
-  font-weight: 800;
-
-  letter-spacing: 0.13em;
 
   line-height: 1.4;
 
@@ -522,35 +322,11 @@ input:focus-visible {
 
 .contact-name {
 
-  margin: 0 0 14px;
-
-  color: var(--text-main);
-
-  font-size: 0.98rem;
-
-  font-weight: 700;
-
-  overflow-wrap: anywhere;
-
 }
 
 
 
 .contact-detail {
-
-  display: grid;
-
-  grid-template-columns: 62px minmax(0, 1fr) auto;
-
-  align-items: center;
-
-  gap: 8px;
-
-  min-height: 37px;
-
-  padding: 6px 0;
-
-  border-top: 1px solid rgb(148 163 184 / 10%);
 
 }
 
@@ -572,14 +348,6 @@ input:focus-visible {
 
 .detail-value {
 
-  min-width: 0;
-
-  color: #dbe6f5;
-
-  font-size: 0.82rem;
-
-  overflow-wrap: anywhere;
-
 }
 
 
@@ -594,35 +362,13 @@ input:focus-visible {
 
   min-height: 28px;
 
-  padding: 5px 9px;
-
-  border: 1px solid #3a4f6c;
-
-  border-radius: 7px;
-
-  background: #22334a;
-
-  color: #b9ceff;
-
-  font-size: 0.72rem;
-
-  font-weight: 700;
-
   white-space: nowrap;
-
-  cursor: pointer;
-
-  transition: background 150ms ease, border-color 150ms ease;
 
 }
 
 
 
 .copy-button:hover {
-
-  border-color: var(--accent);
-
-  background: #2a4162;
 
 }
 
@@ -658,23 +404,11 @@ input:focus-visible {
 
 .cases-panel {
 
-  padding: 22px;
-
 }
 
 
 
 .cases-heading {
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: space-between;
-
-  gap: 16px;
-
-  margin-bottom: 18px;
 
 }
 
@@ -682,39 +416,13 @@ input:focus-visible {
 
 .cases-heading h2 {
 
-  display: flex;
-
-  align-items: center;
-
-  gap: 10px;
-
-  font-size: 1.2rem;
-
 }
 
 
 
 .count-badge {
 
-  display: inline-grid;
-
-  min-width: 27px;
-
-  height: 27px;
-
-  padding: 0 7px;
-
-  place-items: center;
-
   border: 1px solid #365a98;
-
-  border-radius: 8px;
-
-  background: #233c65;
-
-  color: #b9d0ff;
-
-  font-size: 0.76rem;
 
   font-weight: 750;
 
@@ -724,47 +432,17 @@ input:focus-visible {
 
 .panel-description {
 
-  margin: 6px 0 0;
-
-  color: var(--text-muted);
-
-  font-size: 0.84rem;
-
-  line-height: 1.5;
-
 }
 
 
 
 .case-list {
 
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 10px;
-
 }
 
 
 
 .case-row {
-
-  display: grid;
-
-  grid-template-columns: minmax(190px, 1.1fr) minmax(130px, 0.65fr) minmax(280px, 1.5fr) auto;
-
-  align-items: center;
-
-  gap: 20px;
-
-  padding: 17px 18px;
-
-  border: 1px solid var(--border-color);
-
-  border-radius: 12px;
-
-  background: #172438;
 
   transition: border-color 160ms ease, background 160ms ease;
 
@@ -784,33 +462,17 @@ input:focus-visible {
 
 .case-main {
 
-  min-width: 0;
-
 }
 
 
 
 .case-number-line {
 
-  display: flex;
-
-  align-items: center;
-
-  flex-wrap: wrap;
-
-  gap: 9px;
-
 }
 
 
 
 .case-number {
-
-  color: var(--text-main);
-
-  font-size: 1.08rem;
-
-  font-weight: 800;
 
   letter-spacing: 0.015em;
 
@@ -830,12 +492,6 @@ input:focus-visible {
 
 .case-product {
 
-  margin: 6px 0 0;
-
-  color: var(--text-muted);
-
-  font-size: 0.82rem;
-
   line-height: 1.45;
 
   overflow-wrap: anywhere;
@@ -854,33 +510,13 @@ input:focus-visible {
 
   gap: 7px;
 
-  min-width: 0;
-
 }
 
 
 
 .status-badge {
 
-  display: inline-flex;
-
-  align-items: center;
-
   max-width: 100%;
-
-  padding: 6px 10px;
-
-  border: 1px solid #3c5271;
-
-  border-radius: 8px;
-
-  background: #263650;
-
-  color: #dce8ff;
-
-  font-size: 0.76rem;
-
-  font-weight: 700;
 
   line-height: 1.25;
 
@@ -892,23 +528,11 @@ input:focus-visible {
 
 .status-badge[data-status="Working"] {
 
-  border-color: rgb(96 165 250 / 35%);
-
-  background: rgb(59 130 246 / 13%);
-
-  color: #93c5fd;
-
 }
 
 
 
 .status-badge[data-status="Pending Rep Action"] {
-
-  border-color: rgb(251 146 60 / 35%);
-
-  background: rgb(249 115 22 / 12%);
-
-  color: #fdba74;
 
 }
 
@@ -916,23 +540,11 @@ input:focus-visible {
 
 .status-badge[data-status="Proof Out"] {
 
-  border-color: rgb(250 204 21 / 30%);
-
-  background: rgb(234 179 8 / 10%);
-
-  color: #fde047;
-
 }
 
 
 
 .status-badge[data-status="Completed"] {
-
-  border-color: rgb(52 211 153 / 30%);
-
-  background: rgb(16 185 129 / 10%);
-
-  color: #6ee7b7;
 
 }
 
@@ -954,14 +566,6 @@ input:focus-visible {
 
 .case-deadlines {
 
-  display: grid;
-
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-
-  gap: 12px;
-
-  min-width: 0;
-
 }
 
 
@@ -974,23 +578,13 @@ input:focus-visible {
 
   gap: 6px;
 
-  min-width: 0;
-
 }
 
 
 
 .deadline-value {
 
-  color: #e2eaf5;
-
-  font-size: 0.81rem;
-
-  font-weight: 650;
-
   line-height: 1.4;
-
-  overflow-wrap: anywhere;
 
 }
 
@@ -998,19 +592,11 @@ input:focus-visible {
 
 .case-actions {
 
-  display: flex;
-
-  justify-content: flex-end;
-
 }
 
 
 
 .open-case-button {
-
-  min-height: 38px;
-
-  padding: 9px 12px;
 
 }
 
@@ -1052,10 +638,6 @@ input:focus-visible {
 
   border-radius: 12px;
 
-  background: var(--panel-raised);
-
-  color: var(--text-muted);
-
   font-size: 1.3rem;
 
 }
@@ -1063,12 +645,6 @@ input:focus-visible {
 
 
 .empty-state h3 {
-
-  margin: 0;
-
-  color: var(--text-main);
-
-  font-size: 0.95rem;
 
 }
 
@@ -1124,8 +700,6 @@ input:focus-visible {
 
   border: 3px solid #33445e;
 
-  border-top-color: var(--accent);
-
   border-radius: 50%;
 
   animation: workspace-spin 750ms linear infinite;
@@ -1152,10 +726,6 @@ input:focus-visible {
 
 .edit-panel {
 
-  margin-bottom: 24px;
-
-  padding: 24px;
-
 }
 
 
@@ -1169,12 +739,6 @@ input:focus-visible {
 
 
 .edit-grid {
-
-  display: grid;
-
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-
-  gap: 22px;
 
 }
 
@@ -1194,15 +758,11 @@ input:focus-visible {
 
 .edit-section h3 {
 
-  margin: 0 0 16px;
-
   padding-bottom: 10px;
 
   border-bottom: 1px solid var(--border-color);
 
   color: var(--text-main);
-
-  font-size: 0.95rem;
 
   font-weight: 750;
 
@@ -1212,12 +772,6 @@ input:focus-visible {
 
 .edit-section label {
 
-  margin: 0 0 6px;
-
-  color: var(--text-muted);
-
-  font-size: 0.8rem;
-
   font-weight: 600;
 
 }
@@ -1225,8 +779,6 @@ input:focus-visible {
 
 
 .edit-section input {
-
-  width: 100%;
 
   min-height: 41px;
 
@@ -1265,14 +817,6 @@ input:focus-visible {
 
 
 .form-actions {
-
-  display: flex;
-
-  justify-content: flex-end;
-
-  gap: 10px;
-
-  margin-top: 8px;
 
   padding-top: 18px;
 
@@ -1610,8 +1154,6 @@ input:focus-visible {
 
   padding: 20px 28px 32px;
 
-  color: var(--text-primary, #f3f6fc);
-
 }
 
 
@@ -1707,8 +1249,6 @@ input:focus-visible {
 
 
 .meta-separator {
-
-  color: var(--border-color, #334155);
 
 }
 
@@ -1912,10 +1452,6 @@ input:focus-visible {
 
   border-radius: 8px;
 
-  background: var(--surface-raised, #22324a);
-
-  color: var(--accent-text, #a8c4ff);
-
   font-size: 11px;
 
   font-weight: 700;
@@ -1929,10 +1465,6 @@ input:focus-visible {
 
 
 .copy-button:hover {
-
-  background: var(--surface-hover, #2b3d57);
-
-  border-color: var(--accent, #5b8cff);
 
 }
 
@@ -2024,10 +1556,6 @@ input:focus-visible {
 
   border-radius: 8px;
 
-  background: var(--surface-raised, #22324a);
-
-  color: var(--accent-text, #a8c4ff);
-
   font-size: 12px;
 
 }
@@ -2047,14 +1575,6 @@ input:focus-visible {
 
 
 .case-row {
-
-  display: grid;
-
-  grid-template-columns: minmax(170px, 1.2fr) minmax(105px, 0.65fr) minmax(280px, 1.6fr) auto;
-
-  align-items: center;
-
-  gap: 18px;
 
   padding: 14px 16px;
 
@@ -2122,8 +1642,6 @@ input:focus-visible {
 
   margin: 4px 0 0;
 
-  color: var(--text-secondary, #aab9d0);
-
   font-size: 12px;
 
 }
@@ -2156,15 +1674,11 @@ input:focus-visible {
 
   border: 1px solid var(--border-color, #3a4b65);
 
-  border-radius: 7px;
-
   background: var(--surface, #19263a);
 
   color: var(--text-primary, #f3f6fc);
 
   font-size: 11px;
-
-  font-weight: 700;
 
 }
 
@@ -2173,10 +1687,6 @@ input:focus-visible {
 .case-deadlines {
 
   display: grid;
-
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-
-  gap: 12px;
 
 }
 
@@ -2196,8 +1706,6 @@ input:focus-visible {
 
   font-size: 12px;
 
-  font-weight: 600;
-
   overflow-wrap: anywhere;
 
 }
@@ -2206,10 +1714,6 @@ input:focus-visible {
 
 .case-actions {
 
-  display: flex;
-
-  justify-content: flex-end;
-
 }
 
 
@@ -2217,10 +1721,6 @@ input:focus-visible {
 .open-case-button {
 
   white-space: nowrap;
-
-  padding: 9px 12px;
-
-  font-size: 12px;
 
 }
 
@@ -2806,16 +2306,6 @@ input:focus-visible {
 
 .case-selection-actions {
 
-  display: flex;
-
-  align-items: center;
-
-  flex-wrap: wrap;
-
-  gap: 12px;
-
-  margin: 18px 0 12px;
-
   color: var(--text-primary, #f3f6fc);
 
 }
@@ -2872,24 +2362,6 @@ input:focus-visible {
 
 .case-selection-checkbox {
 
-  appearance: auto;
-
-  width: 22px;
-
-  height: 22px;
-
-  min-width: 22px;
-
-  margin: 0;
-
-  justify-self: center;
-
-  align-self: center;
-
-  cursor: pointer;
-
-  accent-color: var(--accent, #5b8cff);
-
 }
 
 
@@ -2898,14 +2370,6 @@ input:focus-visible {
 
 .case-actions {
 
-  display: flex;
-
-  align-items: center;
-
-  justify-content: flex-end;
-
-  min-width: max-content;
-
   align-self: center;
 
 }
@@ -2913,10 +2377,6 @@ input:focus-visible {
 
 
 .open-case-button {
-
-  min-height: 44px;
-
-  padding: 11px 16px;
 
   font-size: 0.875rem;
 
@@ -3114,8 +2574,6 @@ input:focus-visible {
 
   display: flex;
 
-  align-items: center;
-
   justify-content: space-between;
 
   gap: 16px;
@@ -3130,17 +2588,11 @@ input:focus-visible {
 
   border-radius: 12px;
 
-  background: var(--panel-bg, #19263a);
-
 }
 
 
 
 .selection-summary {
-
-  display: flex;
-
-  align-items: center;
 
   min-width: 0;
 
@@ -3150,25 +2602,13 @@ input:focus-visible {
 
 .selected-count {
 
-  color: var(--text-main, #f1f5f9);
-
-  font-size: 0.95rem;
-
-  font-weight: 700;
-
 }
 
 
 
 .selection-buttons {
 
-  display: flex;
-
-  align-items: center;
-
   justify-content: flex-end;
-
-  gap: 10px;
 
   margin-left: auto;
 
@@ -3321,10 +2761,6 @@ input:focus-visible {
 /* Selected case feedback */
 
 .case-list .case-row:has(.case-selection-checkbox:checked) {
-
-  border-color: var(--accent, #5b8cff);
-
-  background: #1b2c45;
 
 }
 
@@ -3569,14 +3005,6 @@ input:focus-visible {
 /* Select All Cases control */
 
 .selection-summary {
-
-  display: flex;
-
-  align-items: center;
-
-  flex-wrap: wrap;
-
-  gap: 16px;
 
 }
 
@@ -4498,12 +3926,6 @@ input:focus-visible {
 /* Save activity */
 
 .activity-cases-panel .save-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 18px;
-  padding-top: 16px;
-  border-top: 1px solid var(--workspace-border);
 }
 
 .button-save:disabled {
