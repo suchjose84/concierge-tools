@@ -65,20 +65,35 @@ export class AccountsComponent implements OnInit {
   }
 
   getRelevantDeadline(
-  caseItem: Account['cases'][number]
-): Date | null {
-  const isPendingRepAction =
-    caseItem.status?.trim().toLowerCase() === 'pending rep action';
-  const deadline = isPendingRepAction
-    ? caseItem.orderDeadline
-    : caseItem.artDeadline;
+    caseItem: Account['cases'][number]
+  ): Date | null {
+    const isPendingRepAction =
+      caseItem.status?.trim().toLowerCase() === 'pending rep action';
 
-  if (!deadline) {
-    return null;
+    const deadline = isPendingRepAction
+      ? caseItem.orderDeadline
+      : caseItem.artDeadline;
+
+    if (!deadline) {
+      return null;
+    }
+
+    return this.getAdjustedDeadline(deadline);
   }
-  const date = new Date(deadline);
-  return Number.isNaN(date.getTime()) ? null : date;
-}
+
+  private getAdjustedDeadline(value: string | Date): Date | null {
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return null;
+    }
+
+    // Move the deadline one calendar day earlier.
+    date.setUTCDate(date.getUTCDate() - 1);
+
+    return date;
+  }
+
 getAccountDeadline(account: Account): Date | null {
   const deadlines = account.cases
     .map((caseItem) => this.getRelevantDeadline(caseItem))

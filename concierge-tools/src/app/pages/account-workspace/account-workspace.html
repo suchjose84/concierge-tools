@@ -484,8 +484,9 @@
                   <span class="field-label">Order Deadline</span>
                   <span class="deadline-value">
                     {{ caseItem.orderDeadline
-                      ? formatDeadline(caseItem.orderDeadline, true)
-                      : '—' }}
+                      ? formatDeadline(caseItem.orderDeadline, true, true)
+                      : '—' 
+                    }}
                   </span>
                 </div>
 
@@ -493,8 +494,9 @@
                   <span class="field-label">Art Deadline</span>
                   <span class="deadline-value">
                     {{ caseItem.artDeadline
-                      ? formatDeadline(caseItem.artDeadline, true)
-                      : '—' }}
+                      ? formatDeadline(caseItem.artDeadline, true, true)
+                      : '—' 
+                    }}
                   </span>
                 </div>
 

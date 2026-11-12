@@ -546,6 +546,8 @@ export class AccountWorkspaceComponent implements OnInit, OnDestroy {
         'success'
       );
 
+      await this.router.navigate(['/accounts']);
+
     } catch (error) {
       console.error('Error saving activity:', error);
 
@@ -651,7 +653,11 @@ export class AccountWorkspaceComponent implements OnInit, OnDestroy {
   // Deadline formatting
   // --------------------------------------------------
 
-  formatDeadline(value: string, includeTime = false): string {
+  formatDeadline(
+    value: string,
+    includeTime = false,
+    adjustOneDay = false
+  ): string {
     const datePart = value.slice(0, 10);
     const parts = datePart.split('-');
 
@@ -662,6 +668,10 @@ export class AccountWorkspaceComponent implements OnInit, OnDestroy {
     if (!year || !month || !day) return value;
 
     const date = new Date(year, month - 1, day);
+
+    if (adjustOneDay) {
+      date.setDate(date.getDate() - 1);
+    }
 
     const formattedDate = date.toLocaleDateString(undefined, {
       month: 'short',
