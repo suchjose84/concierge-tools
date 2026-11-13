@@ -291,13 +291,44 @@
           </p>
         </div>
 
-        <button
-          type="button"
-          class="button button-primary"
-          (click)="startAddingCase()"
-          [disabled]="addingCase() || editingCaseId() !== null || saving() || isActivityRunning || activitySaving">
-          + Add Case
-        </button>
+        <div class="cases-heading-actions">
+          @if (!activityStartedAt) {
+            <button
+              type="button"
+              class="button button-start"
+              (click)="startActivity()"
+              [disabled]="activitySaving || activityCases().length === 0">
+              <span class="button-icon">▶</span>
+              Start Activity
+            </button>
+          } @else if (isActivityRunning) {
+            <button
+              type="button"
+              class="button button-stop"
+              (click)="stopActivityTimer()"
+              [disabled]="activitySaving">
+              <span class="button-icon">■</span>
+              Stop Activity
+            </button>
+          } @else {
+            <button
+              type="button"
+              class="button button-resume"
+              (click)="resumeActivity()"
+              [disabled]="activitySaving">
+              <span class="button-icon">▶</span>
+              Resume Activity
+            </button>
+          }
+
+          <button
+            type="button"
+            class="button button-primary"
+            (click)="startAddingCase()"
+            [disabled]="addingCase() || editingCaseId() !== null || saving() || isActivityRunning || activitySaving">
+            + Add Case
+          </button>
+        </div>
       </div>
 
       <!-- Case Selection -->
@@ -484,8 +515,8 @@
                   <span class="field-label">Order Deadline</span>
                   <span class="deadline-value">
                     {{ caseItem.orderDeadline
-                      ? formatDeadline(caseItem.orderDeadline, true, true)
-                      : '—' 
+                      ? formatDeadline(caseItem.orderDeadline, true)
+                      : '—'
                     }}
                   </span>
                 </div>
@@ -494,8 +525,8 @@
                   <span class="field-label">Art Deadline</span>
                   <span class="deadline-value">
                     {{ caseItem.artDeadline
-                      ? formatDeadline(caseItem.artDeadline, true, true)
-                      : '—' 
+                      ? formatDeadline(caseItem.artDeadline, true)
+                      : '—'
                     }}
                   </span>
                 </div>
@@ -707,44 +738,6 @@
                   : 'Ready to start'
             }}
           </div>
-
-          @if (!activityStartedAt) {
-            <button
-              type="button"
-              class="button button-start"
-              (click)="startActivity()"
-              [disabled]="activitySaving || activityCases().length === 0">
-
-              <span class="button-icon">▶</span>
-              Start Activity
-            </button>
-
-          } @else if (isActivityRunning) {
-
-            <button
-              type="button"
-              class="button button-stop"
-              (click)="stopActivityTimer()"
-              [disabled]="activitySaving">
-
-              <span class="button-icon">■</span>
-              Stop Activity
-            </button>
-
-          } @else {
-
-            <button
-              type="button"
-              class="button button-resume"
-              (click)="resumeActivity()"
-              [disabled]="activitySaving">
-
-              <span class="button-icon">▶</span>
-              Resume Activity
-            </button>
-
-          }
-
         </div>
 
         <div class="activity-note-section">
@@ -792,29 +785,9 @@
               <article class="selected-case-card">
 
                 <div class="selected-case-info">
-
                   <span class="case-number">
                     {{ item.caseItem.caseNumber }}
                   </span>
-
-                  <p class="case-product">
-                    {{ item.caseItem.productType || 'No product type specified' }}
-                  </p>
-
-                  <div class="status-transition">
-
-                    <span class="status-pill status-current">
-                      {{ item.caseItem.status }}
-                    </span>
-
-                    <span class="transition-arrow">→</span>
-
-                    <span class="status-pill status-next">
-                      {{ item.endingStatus }}
-                    </span>
-
-                  </div>
-
                 </div>
 
                 <div class="form-field status-field">

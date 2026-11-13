@@ -78,7 +78,9 @@ export class AccountsComponent implements OnInit {
       return null;
     }
 
-    return this.getAdjustedDeadline(deadline);
+    const date = new Date(deadline);
+
+    return Number.isNaN(date.getTime()) ? null : date;
   }
 
   private getAdjustedDeadline(value: string | Date): Date | null {
@@ -167,17 +169,25 @@ getAccountDeadline(account: Account): Date | null {
 
   getCaseDeadlineLabel(caseItem: Account['cases'][number]): string {
     const deadline = this.getRelevantDeadline(caseItem);
+
     if (!deadline) {
       return 'No deadline';
     }
-    const daysLeft = this.getBusinessDaysDifference(new Date(), deadline);
+
+    // Subtract one business day for countdown display only.
+    const daysLeft =
+      this.getBusinessDaysDifference(new Date(), deadline) - 1;
+
     if (daysLeft < 0) {
       const daysOverdue = Math.abs(daysLeft);
+
       return `Overdue by ${daysOverdue} day${daysOverdue === 1 ? '' : 's'}`;
     }
+
     if (daysLeft === 0) {
       return 'Due today';
     }
+
     return `Due in ${daysLeft} day${daysLeft === 1 ? '' : 's'}`;
   }
 

@@ -655,8 +655,7 @@ export class AccountWorkspaceComponent implements OnInit, OnDestroy {
 
   formatDeadline(
     value: string,
-    includeTime = false,
-    adjustOneDay = false
+    includeTime = false
   ): string {
     const datePart = value.slice(0, 10);
     const parts = datePart.split('-');
@@ -667,11 +666,8 @@ export class AccountWorkspaceComponent implements OnInit, OnDestroy {
 
     if (!year || !month || !day) return value;
 
+    // Preserve the exact date stored in the database.
     const date = new Date(year, month - 1, day);
-
-    if (adjustOneDay) {
-      date.setDate(date.getDate() - 1);
-    }
 
     const formattedDate = date.toLocaleDateString(undefined, {
       month: 'short',
