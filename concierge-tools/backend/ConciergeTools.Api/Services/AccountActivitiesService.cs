@@ -326,6 +326,7 @@ public class AccountActivitiesService
         return results;
     }
 
+    
     public async Task<List<CompletedCaseReportRow>>
         GetRecentCompletedCasesAsync()
     {
@@ -336,21 +337,34 @@ public class AccountActivitiesService
 
         await using var command = new NpgsqlCommand(
             """
-            SELECT DISTINCT ON (c.id)
+            SELECT
                 c.id,
                 c.case_number,
                 a.account_name,
-                aa.ended_at
-            FROM public.account_activity_cases aac
-            JOIN public.account_activities aa
-                ON aa.id = aac.account_activity_id
-            JOIN public.cases c
-                ON c.id = aac.case_id
-            JOIN public.accounts a
+                COALESCE(
+                    completed_activity.ended_at,
+                    c.updated_at
+                ) AS completed_at
+            FROM public.cases c
+            INNER JOIN public.accounts a
                 ON a.id = c.account_id
-            WHERE LOWER(TRIM(aac.ending_status)) = 'completed'
-            AND aa.ended_at IS NOT NULL
-            ORDER BY c.id, aa.ended_at DESC
+            LEFT JOIN LATERAL (
+                SELECT aa.ended_at
+                FROM public.account_activity_cases aac
+                INNER JOIN public.account_activities aa
+                    ON aa.id = aac.account_activity_id
+                WHERE aac.case_id = c.id
+                AND LOWER(TRIM(aac.ending_status)) = 'completed'
+                AND aa.ended_at IS NOT NULL
+                ORDER BY aa.ended_at DESC
+                LIMIT 1
+            ) completed_activity ON TRUE
+            WHERE LOWER(TRIM(c.status)) = 'completed'
+            ORDER BY
+                COALESCE(
+                    completed_activity.ended_at,
+                    c.updated_at
+                ) DESC
             LIMIT 10;
             """,
             connection);
@@ -367,10 +381,9 @@ public class AccountActivitiesService
             ));
         }
 
-        return results
-            .OrderByDescending(c => c.CompletedAt)
-            .ToList();
+        return results;
     }
+
 
     public record CompletedCaseReportRow(
         Guid Id,

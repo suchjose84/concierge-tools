@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ConciergeTools.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2f8b51de2eed93ca8248b87d4c69fb4ff3fcb13e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6baf4dd0859d3a0eb9709b959afb2629b88e3202")]
 [assembly: System.Reflection.AssemblyProductAttribute("ConciergeTools.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ConciergeTools.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
